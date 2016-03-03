@@ -99,7 +99,7 @@ uploadArchives {
           developer {
             id 'fp'
             name 'Fernando Petrola'
-            email 'fernando.petrola@gmail.com'
+            email 'fernando.petrola@dragome.com'
           }
         }
       }
