@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Clipboard;
 import com.dragome.gdx.clipboard.DragomeClipboard;
 import com.dragome.gdx.clipboard.MockUpClipboard;
 import com.dragome.gdx.graphics.DragomeGraphics;
+import com.dragome.gdx.graphics.resizing.ResizeListener;
 import com.dragome.gdx.lifecycle.LifecycleManager;
 import com.dragome.gdx.logging.ConsoleLogger;
 import com.dragome.gdx.logging.DragomeLogger;
@@ -24,6 +25,7 @@ import com.dragome.gdx.render.DebugDragomeRenderer;
 import com.dragome.gdx.render.DragomeRenderer;
 import com.dragome.gdx.render.Renderer;
 import com.dragome.view.DefaultVisualActivity;
+import com.dragome.web.html.dom.Window;
 import com.dragome.web.html.dom.w3c.BrowserDomHandler;
 
 /** Default base implementation of LibGDX {@link Application}. Extends and override any of the create(...) methods to modify the
@@ -292,7 +294,7 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 	public void build () {
 		assignGdxStatics();
 		applicationListener.create();
-		applicationListener.resize(graphics.getWidth(), graphics.getHeight());
+		applyResizing();
 		renderer.start();
 	}
 
@@ -309,5 +311,13 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 		} else {
 			Gdx.gl = Gdx.gl20 = graphics.getGL20();
 		}
+	}
+
+	/** Resizes current {@link ApplicationListener}. Adds resize listener. */
+	protected void applyResizing () {
+		final int width = graphics.getWidth();
+		final int height = graphics.getHeight();
+		applicationListener.resize(width, height);
+		Window.getInstance().onResize(new ResizeListener(width, height));
 	}
 }
