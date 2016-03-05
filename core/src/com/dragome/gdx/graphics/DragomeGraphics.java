@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.gdx.DragomeApplication;
 import com.dragome.gdx.graphics.resizing.Resizer;
+import com.dragome.gdx.graphics.webgl.MockUpGL20;
 import com.dragome.gdx.lifecycle.Renderer;
 import com.dragome.web.html.dom.html5canvas.interfaces.HTMLCanvasElement;
 
@@ -49,7 +50,7 @@ public class DragomeGraphics implements Graphics {
 		renderer = application.getRenderer();
 		oldWidth = canvas.getWidth();
 		oldHeight = canvas.getHeight();
-		gl20 = null; // TODO implement GL20
+		gl20 = new MockUpGL20(); // TODO Replace with actual implementation.
 	}
 
 	@Override
