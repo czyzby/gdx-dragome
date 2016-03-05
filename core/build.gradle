@@ -54,6 +54,7 @@ eclipse.project.name = "gdx-backend-dragome"
 
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    compile "com.dragome:dragome-js-jre:$dragomeVersion"
     compile "com.dragome:dragome-guia:$dragomeVersion"
 	 compile "com.dragome:dragome-web:$dragomeVersion"
 
