@@ -1,5 +1,5 @@
 
-package com.dragome.gdx.render;
+package com.dragome.gdx.lifecycle;
 
 import com.badlogic.gdx.ApplicationListener;
 

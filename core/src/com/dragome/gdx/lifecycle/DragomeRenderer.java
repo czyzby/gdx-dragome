@@ -1,5 +1,5 @@
 
-package com.dragome.gdx.render;
+package com.dragome.gdx.lifecycle;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.utils.Array;
@@ -39,7 +39,7 @@ public class DragomeRenderer implements Renderer {
 		// window.requestAnimationFrame polyfill:
 		ScriptHelper.evalNoResult(
 			"(function(){for(var n=0,e=['ms','moz','webkit','o'],i=0;i<e.length&&!window.requestAnimationFrame;++i)window.requestAnimationFrame=window[e[i]+'RequestAnimationFrame'],window.cancelAnimationFrame=window[e[i]+'CancelAnimationFrame']||window[e[i]+'CancelRequestAnimationFrame'];window.requestAnimationFrame||(window.requestAnimationFrame=function(e,i){var a=(new Date).getTime(),o=Math.max(0,16-(a-n)),t=window.setTimeout(function(){e(a+o)},o);return n=a+o,t},window.cancelAnimationFrame=function(n){clearTimeout(n)})})();",
-			this); // Credits: Erik Moller,mPaul Irish and Tino Zijdel, see http://creativejs.com/resources/requestanimationframe/
+			this); // Credits: Erik Moller, Paul Irish and Tino Zijdel, see http://creativejs.com/resources/requestanimationframe/
 	}
 
 	@Override

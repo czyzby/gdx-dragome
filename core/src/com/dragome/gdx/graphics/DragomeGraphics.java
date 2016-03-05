@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.gdx.DragomeApplication;
 import com.dragome.gdx.graphics.resizing.Resizer;
-import com.dragome.gdx.render.Renderer;
+import com.dragome.gdx.lifecycle.Renderer;
 import com.dragome.web.html.dom.html5canvas.interfaces.HTMLCanvasElement;
 
 /** Default implementation of {@link Graphics} for Dragome applications. Wraps around a HTML canvas and WebGL. Does not support
