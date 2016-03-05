@@ -16,6 +16,7 @@ import com.dragome.gdx.clipboard.DragomeClipboard;
 import com.dragome.gdx.clipboard.MockUpClipboard;
 import com.dragome.gdx.graphics.DragomeGraphics;
 import com.dragome.gdx.graphics.resizing.ResizeListener;
+import com.dragome.gdx.input.DragomeInput;
 import com.dragome.gdx.lifecycle.DebugDragomeRenderer;
 import com.dragome.gdx.lifecycle.DragomeRenderer;
 import com.dragome.gdx.lifecycle.LifecycleManager;
@@ -145,9 +146,10 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 		return new DragomeGraphics(this);
 	}
 
-	/** @return a new instance of {@link Input} implementation, handling user's input. */
+	/** @return a new instance of {@link Input} implementation, handling user's input.
+	 * @see DragomeInput */
 	protected Input createInput () {
-		return null; // TODO implement Input, add @see
+		return new DragomeInput();
 	}
 
 	@Override
