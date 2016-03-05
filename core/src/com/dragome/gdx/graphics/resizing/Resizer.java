@@ -16,6 +16,8 @@ public class Resizer implements Runnable {
 
 	@Override
 	public void run () {
-		Gdx.app.getApplicationListener().resize(width, height);
+		if (Gdx.graphics.getWidth() == width && Gdx.graphics.getHeight() == height) {
+			Gdx.app.getApplicationListener().resize(width, height);
+		}
 	}
 }

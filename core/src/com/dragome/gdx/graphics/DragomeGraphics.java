@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.gdx.DragomeApplication;
+import com.dragome.gdx.graphics.resizing.Resizer;
 import com.dragome.gdx.render.Renderer;
 import com.dragome.web.html.dom.html5canvas.interfaces.HTMLCanvasElement;
 
@@ -255,11 +256,20 @@ public class DragomeGraphics implements Graphics {
 			final int screenWidth = getScreenWidth(), screenHeight = getScreenHeight();
 			canvas.setWidth(screenWidth);
 			canvas.setHeight(screenHeight);
-			application.getApplicationListener().resize(screenWidth, screenHeight);
+			addResizeEvent(screenWidth, screenHeight);
 			// TODO set fullscreen, add listener that resizes application if it goes back to window mode
 			return true;
 		}
 		return false;
+	}
+
+	/** Will post an event which will resize the game during the next render call. Width and height have to match current
+	 * application size.
+	 * @param width current application width.
+	 * @param height current application height. */
+	protected void addResizeEvent (final int width, final int height) {
+		// Change to application.getApplicationListener().resize(width, height); for immediate resize.
+		application.postRunnable(new Resizer(width, height));
 	}
 
 	/** Should be invoked each time the application exits fullscreen mode. */
@@ -270,7 +280,7 @@ public class DragomeGraphics implements Graphics {
 			if (canvas.getWidth() != oldWidth || canvas.getHeight() != oldHeight) {
 			canvas.setWidth(oldWidth);
 			canvas.setHeight(oldHeight);
-			application.getApplicationListener().resize(oldWidth, oldHeight);
+			addResizeEvent(oldWidth, oldHeight);
 			}
 			unlockOrientation();
 		}
@@ -304,7 +314,7 @@ public class DragomeGraphics implements Graphics {
 		}
 		canvas.setWidth(width);
 		canvas.setHeight(height);
-		application.getApplicationListener().resize(width, height);
+		addResizeEvent(width, height);
 		return true;
 	}
 
