@@ -1,6 +1,7 @@
 
 package com.dragome.gdx;
 
+import com.badlogic.gdx.Graphics;
 import com.dragome.gdx.graphics.DragomeGraphics.OrientationLockType;
 
 /** Allows to configure {@link DragomeApplication}.
@@ -36,7 +37,8 @@ public class DragomeApplicationConfiguration {
 	}
 
 	/** @param useGl30 if true, GL30 will be used where available. Defaults to false. WebGL currently seems to support only GL20,
-	 *           so this value is mostly ignored by default.
+	 *           so this value is mostly ignored by default. Set to true if you added custom GL30 implementation to
+	 *           {@link Graphics}.
 	 * @return this, for chaining. */
 	public DragomeApplicationConfiguration setUseGl30 (final boolean useGl30) {
 		this.useGl30 = useGl30;

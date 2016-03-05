@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Clipboard;
 import com.dragome.gdx.audio.DragomeAudio;
 import com.dragome.gdx.clipboard.DragomeClipboard;
 import com.dragome.gdx.clipboard.MockUpClipboard;
+import com.dragome.gdx.files.DragomeFiles;
 import com.dragome.gdx.graphics.DragomeGraphics;
 import com.dragome.gdx.graphics.resizing.ResizeListener;
 import com.dragome.gdx.input.DragomeInput;
@@ -56,8 +57,8 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 	// Helpers:
 	private final BrowserDomHandler domBrowser = new BrowserDomHandler();
 	private final DragomeApplicationConfiguration configuration;
-	private final LifecycleManager lifecycleManager;
 	private final PreferencesResolver preferencesResolver;
+	private final LifecycleManager lifecycleManager;
 	private final DragomeLogger logger;
 	private final Clipboard clipboard;
 	private final Renderer renderer;
@@ -137,9 +138,10 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 		return new DragomeAudio();
 	}
 
-	/** @return a new instance of {@link Files} implementation, handling application's files support. */
+	/** @return a new instance of {@link Files} implementation, handling application's files support.
+	 * @see DragomeFiles */
 	protected Files createFiles () {
-		return null; // TODO implement Files, add @see
+		return new DragomeFiles();
 	}
 
 	/** @return a new instance of {@link Graphics} implementation, handling application's graphics.
