@@ -12,6 +12,7 @@ import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Clipboard;
+import com.dragome.gdx.audio.DragomeAudio;
 import com.dragome.gdx.clipboard.DragomeClipboard;
 import com.dragome.gdx.clipboard.MockUpClipboard;
 import com.dragome.gdx.graphics.DragomeGraphics;
@@ -130,9 +131,10 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 		return new DragomeNet();
 	}
 
-	/** @return a new instance of {@link Audio} implementation, handling application's sound support. */
+	/** @return a new instance of {@link Audio} implementation, handling application's sound support.
+	 * @see DragomeAudio */
 	protected Audio createAudio () {
-		return null; // TODO implement Audio, add @see
+		return new DragomeAudio();
 	}
 
 	/** @return a new instance of {@link Files} implementation, handling application's files support. */
