@@ -349,11 +349,8 @@ public class DragomeGraphics implements Graphics {
 		String getName ();
 	}
 
-	/** Enum values from http://www.w3.org/TR/screen-orientation. Filtered based on what the browsers actually support. */ // Based
-																															// on
-																															// GWT
-																															// backend.
-	public static enum CommonOrientationLockType implements OrientationLockType {
+	/** Enum values from http://www.w3.org/TR/screen-orientation. Filtered based on what the browsers actually support. */
+	public static enum CommonOrientationLockType implements OrientationLockType { // Based on GWT backend.
 		LANDSCAPE("landscape"), PORTRAIT("portrait"), PORTRAIT_PRIMARY("portrait-primary"), PORTRAIT_SECONDARY(
 			"portrait-secondary"), LANDSCAPE_PRIMARY("landscape-primary"), LANDSCAPE_SECONDARY("landscape-secondary");
 
