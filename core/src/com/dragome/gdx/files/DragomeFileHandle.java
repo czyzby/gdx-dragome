@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
  * {@link #hashCode()}, can be used in hash-based collections.
  * @author MJ */
 public class DragomeFileHandle extends AbstractFileHandle {
-	/** @param path cannot be null or empty. Back slashes will be replaced with regular slashes.
+	/** @param path cannot be null. Back slashes will be replaced with regular slashes.
 	 * @param type has to be {@link FileType#Internal} or {@link FileType#Classpath}. */
 	public DragomeFileHandle (final String path, final FileType type) {
 		super(path, type);

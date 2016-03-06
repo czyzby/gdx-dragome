@@ -23,10 +23,10 @@ import com.dragome.gdx.DragomeApplication;
 public abstract class AbstractFileHandle extends FileHandle {
 	private final String path;
 
-	/** @param path cannot be null or empty. Back slashes will be replaced with regular slashes.
+	/** @param path cannot be null. Back slashes will be replaced with regular slashes.
 	 * @param type cannot be null. */
 	public AbstractFileHandle (final String path, final FileType type) {
-		if (path == null || path.length() == 0 || type == null) {
+		if (path == null || type == null) {
 			throw new GdxRuntimeException("Cannot create file with unknown path or type.");
 		}
 		this.path = normalize(path);

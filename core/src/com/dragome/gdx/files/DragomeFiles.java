@@ -10,12 +10,12 @@ import com.dragome.gdx.DragomeApplication;
 /** Dragome {@link Files} implementation. Supports only {@link FileType#Classpath} and {@link FileType#Internal} file types.
  * @author MJ */
 public class DragomeFiles implements Files {
+	/** @param path path to the file. Cannot be null.
+	 * @param type has to be {@link FileType#Internal} or {@link FileType#Classpath}.
+	 * @throws GdxRuntimeException if invalid file type is requested. */
 	@Override
 	public FileHandle getFileHandle (final String path, final FileType type) {
-		if (type == FileType.Internal || type == FileType.Classpath) {
-			return new DragomeFileHandle(path, type);
-		}
-		throw new GdxRuntimeException("File type not supported: " + type);
+		return new DragomeFileHandle(path, type);
 	}
 
 	@Override
@@ -35,6 +35,7 @@ public class DragomeFiles implements Files {
 
 	@Override
 	public FileHandle absolute (final String path) {
+		// TODO Absolute files can be supported - a HTTP request could be sent to the exact address passed by the user.
 		throw new GdxRuntimeException("File type not supported: " + FileType.Absolute);
 	}
 
