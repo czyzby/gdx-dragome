@@ -8,7 +8,7 @@ sourceCompatibility = 1.6
 
 ext {
     gdxVersion = '1.9.2'
-    dragomeVersion = '0.96-beta2'
+    dragomeVersion = '0.96-beta3-SNAPSHOT'
     isSnapshot = '-SNAPSHOT'
 }
 
@@ -56,7 +56,7 @@ dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile "com.dragome:dragome-js-jre:$dragomeVersion"
     compile "com.dragome:dragome-guia:$dragomeVersion"
-	 compile "com.dragome:dragome-web:$dragomeVersion"
+    compile "com.dragome:dragome-web:$dragomeVersion"
 
     deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
     deployerJars "org.apache.maven.wagon:wagon-http:2.2"
