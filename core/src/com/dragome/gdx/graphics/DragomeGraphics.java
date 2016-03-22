@@ -1,10 +1,12 @@
 
 package com.dragome.gdx.graphics;
 
+import org.w3c.dom.ObjectArray;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
 import org.w3c.dom.html.HTMLCanvasElement;
 import org.w3c.dom.webgl.WebGLRenderingContext;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
@@ -12,11 +14,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.ObjectSet;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.gdx.DragomeApplication;
 import com.dragome.gdx.graphics.resizing.Resizer;
 import com.dragome.gdx.graphics.webgl.DragomeGL20;
 import com.dragome.gdx.lifecycle.Renderer;
+import com.dragome.web.html.dom.Window;
 
 /** Default implementation of {@link Graphics} for Dragome applications. Wraps around a HTML canvas and WebGL. Does not support
  * GL30. Allows to go to fullscreen mode only if chosen display mode matches current screen size. Allows to change cursors and
@@ -37,11 +41,12 @@ public class DragomeGraphics implements Graphics {
 	private final DragomeApplication application;
 	private final HTMLCanvasElement canvas;
 	private final Renderer renderer;
+	private final WebGLRenderingContext context;
 	private final GL20 gl20;
 	// Cache:
 	private final Monitor monitor = new DragomeMonitor(0, 0, DragomeApplication.LOGGING_TAG);
 	private final DisplayMode displayMode = new DragomeDisplayMode(getScreenWidth(), getScreenHeight(), REFRESH_RATE, BPP);
-	private String extensions;
+	private ObjectSet<String> extensions;
 	private int oldWidth;
 	private int oldHeight;
 
@@ -52,9 +57,20 @@ public class DragomeGraphics implements Graphics {
 		renderer = application.getRenderer();
 		oldWidth = canvas.getWidth();
 		oldHeight = canvas.getHeight();
-		final WebGLRenderingContext context = (WebGLRenderingContext)canvas.getContext("webgl");
+		context = (WebGLRenderingContext)canvas.getContext("webgl");
 		context.viewport(0, 0, oldWidth, oldHeight);
 		gl20 = createGL20(context);
+		addFullscreenListener();
+	}
+
+	private void addFullscreenListener () {
+		// TODO I think this listener should be added to document rather than window.
+		Window.getInstance().addEventListener(new EventListener() {
+			@Override
+			public void handleEvent (final Event event) {
+			fullscreenChanged();
+			}
+		}, "fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange");
 	}
 
 	/** @param context WebGL rendering context from application's main canvas.
@@ -220,8 +236,14 @@ public class DragomeGraphics implements Graphics {
 
 	@Override
 	public boolean supportsExtension (final String extension) {
+		if (extension == null) {
+			return false;
+		}
 		if (extensions == null) {
-			extensions = Gdx.gl.glGetString(GL20.GL_EXTENSIONS);
+			final ObjectArray<String> availableExtensions = context.getSupportedExtensions();
+			for (int i = 0, l = availableExtensions.getLength(); i < l; i++) {
+			extensions.add(availableExtensions.getElement(i));
+			}
 		}
 		return extensions.contains(extension);
 	}
@@ -285,7 +307,7 @@ public class DragomeGraphics implements Graphics {
 		application.postRunnable(new Resizer(width, height));
 	}
 
-	/** Should be invoked each time the application exits fullscreen mode. */
+	/** Should be invoked each time the application exits or enters fullscreen mode. */
 	public void fullscreenChanged () {
 		if (isFullscreen()) {
 			lockOrientation();
