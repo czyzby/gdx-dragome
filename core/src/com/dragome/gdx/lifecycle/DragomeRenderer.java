@@ -36,13 +36,17 @@ public class DragomeRenderer implements Renderer {
 	/** @param listener will be informed of rendering events. */
 	public DragomeRenderer (final ApplicationListener listener) {
 		this.listener = listener;
-		// Date.now() polyfill:
-		ScriptHelper.evalNoResult("if(!Date.now){Date.now=function now(){return new Date().getTime();};}", this);
-		// window.requestAnimationFrame polyfill:
+		addDatePolyfill();
 		addAnimationPolyfill();
 	}
 
-	/** @author Erik Moller, Paul Irish, Tino Zijdel
+	/** Date.now() polyfill. */
+	protected void addDatePolyfill () {
+		ScriptHelper.evalNoResult("if(!Date.now){Date.now=function now(){return new Date().getTime();};}", this);
+	}
+
+	/** window.requestAnimationFrame polyfill.
+	 * @author Erik Moller, Paul Irish, Tino Zijdel
 	 * @see <a href="http://creativejs.com/resources/requestanimationframe/">CreativeJS</a> */
 	private void addAnimationPolyfill () {
 		ScriptHelper.evalNoResult(

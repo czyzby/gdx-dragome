@@ -2,6 +2,7 @@
 package com.dragome.gdx.graphics;
 
 import org.w3c.dom.html.HTMLCanvasElement;
+import org.w3c.dom.webgl.WebGLRenderingContext;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
@@ -14,7 +15,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.gdx.DragomeApplication;
 import com.dragome.gdx.graphics.resizing.Resizer;
-import com.dragome.gdx.graphics.webgl.MockUpGL20;
+import com.dragome.gdx.graphics.webgl.DragomeGL20;
 import com.dragome.gdx.lifecycle.Renderer;
 
 /** Default implementation of {@link Graphics} for Dragome applications. Wraps around a HTML canvas and WebGL. Does not support
@@ -51,7 +52,16 @@ public class DragomeGraphics implements Graphics {
 		renderer = application.getRenderer();
 		oldWidth = canvas.getWidth();
 		oldHeight = canvas.getHeight();
-		gl20 = new MockUpGL20(); // TODO Replace with actual implementation.
+		final WebGLRenderingContext context = (WebGLRenderingContext)canvas.getContext("webgl");
+		context.viewport(0, 0, oldWidth, oldHeight);
+		gl20 = createGL20(context);
+	}
+
+	/** @param context WebGL rendering context from application's main canvas.
+	 * @return {@link GL20} implementation.
+	 * @see DragomeGL20 */
+	protected GL20 createGL20 (final WebGLRenderingContext context) {
+		return new DragomeGL20(context);
 	}
 
 	@Override
@@ -267,7 +277,7 @@ public class DragomeGraphics implements Graphics {
 
 	/** Will post an event which will resize the game during the next render call. Width and height have to match current
 	 * application size.
-	 * 
+	 *
 	 * @param width current application width.
 	 * @param height current application height. */
 	protected void addResizeEvent (final int width, final int height) {
