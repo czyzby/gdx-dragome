@@ -12,6 +12,10 @@ public class DragomeApplicationConfiguration {
 	private String canvasId = "#dragomeCanvas";
 	private boolean useGl30;
 	private boolean stencil;
+	private boolean antialiasEnabled;
+	private boolean alphaEnabled;
+	private boolean premultipliedAlpha;
+	private boolean drawingBufferPreserved;
 
 	/** @param fullscreenOrientation if not null, will attempt locking as the application enters full-screen-mode.
 	 * @return this, for chaining.
@@ -45,6 +49,36 @@ public class DragomeApplicationConfiguration {
 		return this;
 	}
 
+	/** @param antialiasEnabled true will enable antialiasing.
+	 * @return this, for chaining. */
+	public DragomeApplicationConfiguration setAntialiasEnabled (final boolean antialiasEnabled) {
+		this.antialiasEnabled = antialiasEnabled;
+		return this;
+	}
+
+	/** @param alphaEnabled if true, an alpha channel will be included in the color buffer to combine the color buffer with the
+	 *           rest of the webpage - effectively allowing transparent backgrounds at a performance cost.
+	 * @return this, for chaining. */
+	public DragomeApplicationConfiguration setAlphaEnabled (final boolean alphaEnabled) {
+		this.alphaEnabled = alphaEnabled;
+		return this;
+	}
+
+	/** @param premultipliedAlpha true to used premultiplied alpha. Might have performance impact.
+	 * @return this, for chaining. */
+	public DragomeApplicationConfiguration setPremultipliedAlpha (final boolean premultipliedAlpha) {
+		this.premultipliedAlpha = premultipliedAlpha;
+		return this;
+	}
+
+	/** @param drawingBufferPreserved true to preserve back buffer which allows to take screenshots via {@code canvas#toDataUrl}.
+	 *           May have performance impact.
+	 * @return this, for chaining. */
+	public DragomeApplicationConfiguration setDrawingBufferPreserved (final boolean drawingBufferPreserved) {
+		this.drawingBufferPreserved = drawingBufferPreserved;
+		return this;
+	}
+
 	/** @return orientation type that should be used during fullscreen mode. Can be null. */
 	public OrientationLockType getFullscreenOrientation () {
 		return fullscreenOrientation;
@@ -63,5 +97,25 @@ public class DragomeApplicationConfiguration {
 	/** @return true if GL30 should be used instead of GL20. Most likely not supported. */
 	public boolean useGl30 () {
 		return useGl30;
+	}
+
+	/** @return true if antialias should be enabled. */
+	public boolean isAntialiasEnabled () {
+		return antialiasEnabled;
+	}
+
+	/** @return true if alpha channel should be included in the color buffer. */
+	public boolean isAlphaEnabled () {
+		return alphaEnabled;
+	}
+
+	/** @return true if premultiplied alpha should be used. */
+	public boolean isPremultipliedAlpha () {
+		return premultipliedAlpha;
+	}
+
+	/** @return true to preserve back buffer. */
+	public boolean isDrawingBufferPreserved () {
+		return drawingBufferPreserved;
 	}
 }

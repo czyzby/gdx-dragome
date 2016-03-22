@@ -5,6 +5,7 @@ import org.w3c.dom.ObjectArray;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.html.HTMLCanvasElement;
+import org.w3c.dom.webgl.WebGLContextAttributes;
 import org.w3c.dom.webgl.WebGLRenderingContext;
 
 import com.badlogic.gdx.Graphics;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.gdx.DragomeApplication;
+import com.dragome.gdx.DragomeApplicationConfiguration;
 import com.dragome.gdx.graphics.resizing.Resizer;
 import com.dragome.gdx.graphics.webgl.DragomeGL20;
 import com.dragome.gdx.lifecycle.Renderer;
@@ -57,10 +59,22 @@ public class DragomeGraphics implements Graphics {
 		renderer = application.getRenderer();
 		oldWidth = canvas.getWidth();
 		oldHeight = canvas.getHeight();
-		context = (WebGLRenderingContext)canvas.getContext("webgl");
+		context = (WebGLRenderingContext)canvas.getContext("webgl", getWebGlAttributes(application.getConfiguration()));
 		context.viewport(0, 0, oldWidth, oldHeight);
 		gl20 = createGL20(context);
 		addFullscreenListener();
+	}
+
+	/** Sets {@link WebGLContextAttributes} according to {@link DragomeApplicationConfiguration}.
+	 * @return a configuration object with WebGL attributes. */
+	protected WebGLContextAttributes getWebGlAttributes (final DragomeApplicationConfiguration configuration) {
+		final WebGLContextAttributes attributes = (WebGLContextAttributes)ScriptHelper.eval("{};", this);
+		attributes.setAlpha(configuration.isAlphaEnabled());
+		attributes.setAntialias(configuration.isAntialiasEnabled());
+		attributes.setStencil(configuration.isStencil());
+		attributes.setPremultipliedAlpha(configuration.isPremultipliedAlpha());
+		attributes.setPreserveDrawingBuffer(configuration.isDrawingBufferPreserved());
+		return attributes;
 	}
 
 	private void addFullscreenListener () {
