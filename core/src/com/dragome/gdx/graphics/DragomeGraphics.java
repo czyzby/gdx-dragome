@@ -306,7 +306,7 @@ public class DragomeGraphics implements Graphics {
 			canvas.setHeight(screenHeight);
 			addResizeEvent(screenWidth, screenHeight);
 			ScriptHelper.put("_elem", canvas, this);
-			ScriptHelper.eval("if(_elem.requestFullscreen){_elem.requestFullscreen();}"
+			ScriptHelper.evalNoResult("if(_elem.requestFullscreen){_elem.requestFullscreen();}"
 			+ "else if(_elem.webkitRequestFullScreen){_elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);}"
 			+ "else if(_elem.mozRequestFullScreen){_elem.mozRequestFullScreen();}"
 			+ "else if(_elem.msRequestFullscreen){_elem.msRequestFullscreen();}", this);

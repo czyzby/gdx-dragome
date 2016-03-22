@@ -1,78 +1,120 @@
 
 package com.dragome.gdx.audio;
 
+import org.w3c.dom.html.HTMLAudioElement;
+
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.dragome.commons.javascript.ScriptHelper;
 
-/** Not yet implemented. */
-public class DragomeMusic implements Music {
+/** Default implementation of {@link Music} in Dragome applications. Uses {@code audio} HTML element to play sounds.
+ * @author Alexey Andreev
+ * @author MJ */ // Based on unfinished TeaVM backend.
+public class DragomeMusic implements Music, Runnable {
+	private HTMLAudioElement element;
+	private boolean started;
+	private OnCompletionListener listener;
+	private final Runnable onEnded;
+
 	public DragomeMusic (final FileHandle file) {
-		throw new GdxRuntimeException("Not yet implemented.");
+		element = (HTMLAudioElement)ScriptHelper.eval("document.createElement('audio');", this);
+		element.setSrc(file.path()); // TODO Correct path after Files implementation (if necessary).
+		onEnded = this;
+		ScriptHelper.put("_elem", element, this);
+		ScriptHelper.put("_end", onEnded, this);
+		ScriptHelper.evalNoResult("_elem.onended=function(){_end.$run$void();};document.body.appendChild(_elem);", this);
+	}
+
+	@Override
+	public void run () {
+		listener.onCompletion(this);
+	}
+
+	private void checkDisposed () {
+		if (element == null) {
+			throw new IllegalStateException("This music instance is already disposed.");
+		}
 	}
 
 	@Override
 	public void play () {
-		// TODO Implement music.
+		checkDisposed();
+		element.play();
+		started = true;
 	}
 
 	@Override
 	public void pause () {
-		// TODO Implement music.
+		checkDisposed();
+		element.pause();
 	}
 
 	@Override
 	public void stop () {
-		// TODO Implement music.
+		checkDisposed();
+		element.pause();
+		element.setCurrentTime(0);
+		started = false;
 	}
 
 	@Override
 	public boolean isPlaying () {
-		return false; // TODO Implement music.
+		checkDisposed();
+		return started && !element.getPaused() && element.getEnded();
 	}
 
 	@Override
 	public void setLooping (final boolean isLooping) {
-		// TODO Implement music.
+		checkDisposed();
+		element.setLoop(isLooping);
 	}
 
 	@Override
 	public boolean isLooping () {
-		return false; // TODO Implement music.
+		checkDisposed();
+		return element.getLoop();
 	}
 
 	@Override
 	public void setVolume (final float volume) {
-		// TODO Implement music.
+		checkDisposed();
+		element.setVolume(volume);
 	}
 
 	@Override
 	public float getVolume () {
-		return 0; // TODO Implement music.
+		checkDisposed();
+		return (float)element.getVolume();
 	}
 
 	@Override
 	public void setPan (final float pan, final float volume) {
-		// TODO Implement music.
+		checkDisposed(); // TODO pan is unsupported.
+		element.setVolume(volume);
 	}
 
 	@Override
 	public void setPosition (final float position) {
-		// TODO Implement music.
+		checkDisposed();
+		element.setCurrentTime(position);
 	}
 
 	@Override
 	public float getPosition () {
-		return 0; // TODO Implement music.
+		checkDisposed();
+		return (float)element.getCurrentTime();
 	}
 
 	@Override
 	public void dispose () {
-		// TODO Implement music.
+		if (element != null) {
+			element.getParentNode().removeChild(element);
+			element = null;
+		}
 	}
 
 	@Override
 	public void setOnCompletionListener (final OnCompletionListener listener) {
-		// TODO Implement music.
+		this.listener = listener;
 	}
 }
