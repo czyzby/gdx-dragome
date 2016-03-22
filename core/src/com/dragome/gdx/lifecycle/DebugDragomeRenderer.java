@@ -7,7 +7,7 @@ import com.badlogic.gdx.ApplicationListener;
  *
  * @author MJ */
 public class DebugDragomeRenderer extends DragomeRenderer {
-	private long frameId;
+	private long frameId = -1L;
 	private float timePassed;
 	private int frames;
 	private int fps;
@@ -29,7 +29,6 @@ public class DebugDragomeRenderer extends DragomeRenderer {
 
 	@Override
 	protected void loop () {
-		super.loop();
 		frameId++;
 		frames++;
 		timePassed += getDeltaTime();
@@ -38,5 +37,6 @@ public class DebugDragomeRenderer extends DragomeRenderer {
 			fps = frames;
 			frames = 0;
 		}
+		super.loop();
 	}
 }
