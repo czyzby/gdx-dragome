@@ -296,7 +296,7 @@ public class DragomeGraphics implements Graphics {
 		return false;
 	}
 
-	/** Attempts to enter fullscreen mode. Returns true if succeeded. */
+	/** Attempts to enter fullscreen mode. Returns true if attempted to enter fullscreen mode. */
 	public boolean enterFullscreen () {
 		if (supportsDisplayModeChange()) {
 			oldWidth = canvas.getWidth();
@@ -305,7 +305,11 @@ public class DragomeGraphics implements Graphics {
 			canvas.setWidth(screenWidth);
 			canvas.setHeight(screenHeight);
 			addResizeEvent(screenWidth, screenHeight);
-			// TODO set fullscreen, add listener that resizes application if it goes back to window mode
+			ScriptHelper.put("_elem", canvas, this);
+			ScriptHelper.eval("if(_elem.requestFullscreen){_elem.requestFullscreen();}"
+			+ "else if(_elem.webkitRequestFullScreen){_elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);}"
+			+ "else if(_elem.mozRequestFullScreen){_elem.mozRequestFullScreen();}"
+			+ "else if(_elem.msRequestFullscreen){_elem.msRequestFullscreen();}", this);
 			return true;
 		}
 		return false;
