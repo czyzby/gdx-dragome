@@ -3,8 +3,9 @@ package com.dragome.gdx.net;
 
 import java.util.Map.Entry;
 
+import org.w3c.dom.EventHandler;
 import org.w3c.dom.XMLHttpRequest;
-import org.w3c.dom.html.Function;
+import org.w3c.dom.events.Event;
 
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.net.ServerSocket;
@@ -36,16 +37,15 @@ public class DragomeNet implements Net {
 			return;
 		}
 		final XMLHttpRequest request = (XMLHttpRequest)ScriptHelper.eval("new XMLHttpRequest();", this);
-		request.setOnreadystatechange(new Function() { // TODO Is that the correct way to pass function?
+		request.setOnreadystatechange(new EventHandler() {
 			@Override
-			public Object call (final Object... arguments) {
+			public void handleEvent (final Event evt) {
 			if (request.getReadyState() != XMLHttpRequest.DONE) {
-				return null;
+				return;
 			}
 			httpResponseListener.handleHttpResponse(new DragomeHttpResponse(request));
 			requests.remove(httpRequest);
 			listeners.remove(httpRequest);
-			return null;
 			}
 		});
 		final boolean valueInUrl = HttpMethods.GET.equalsIgnoreCase(httpRequest.getMethod())

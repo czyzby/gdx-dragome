@@ -42,6 +42,7 @@ import org.w3c.dom.webgl.WebGLUniformLocation;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.IntMap;
+import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 
 /** Default implementation of {@link GL20} for Dragome applications. Wraps around WebGL.
  * @author MJ */
@@ -63,10 +64,10 @@ public class DragomeGL20 implements GL20 {
 	private int nextUniformId = 1;
 	private int currProgram = 0;
 
-	protected final WebGLRenderingContext gl;
+	protected final WebGLRenderingContextExtension gl;
 
 	public DragomeGL20 (final WebGLRenderingContext gl) {
-		this.gl = gl;
+		this.gl = (WebGLRenderingContextExtension)gl;
 		this.gl.pixelStorei(WebGLRenderingContext.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
 	}
 
@@ -1038,7 +1039,7 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform1fv (final int location, final int count, final float[] v, final int offset) {
 		final WebGLUniformLocation loc = getUniformLocation(location);
-		gl.uniform1fv(loc, TypedArrays.copy(v)); // TODO Shouldn't WebGL support arrays?
+		gl.uniform1fv(loc, v);
 	}
 
 	@Override
@@ -1056,7 +1057,7 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform1iv (final int location, final int count, final int[] v, final int offset) {
 		final WebGLUniformLocation loc = getUniformLocation(location);
-		gl.uniform1iv(loc, TypedArrays.copy(v)); // TODO Shouldn't WebGL support arrays?
+		gl.uniform1iv(loc, v);
 	}
 
 	@Override
@@ -1074,7 +1075,7 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform2fv (final int location, final int count, final float[] v, final int offset) {
 		final WebGLUniformLocation loc = getUniformLocation(location);
-		gl.uniform2fv(loc, TypedArrays.copy(v)); // TODO Shouldn't WebGL support arrays?
+		gl.uniform2fv(loc, v);
 	}
 
 	@Override
@@ -1092,7 +1093,7 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform2iv (final int location, final int count, final int[] v, final int offset) {
 		final WebGLUniformLocation loc = getUniformLocation(location);
-		gl.uniform2iv(loc, TypedArrays.copy(v)); // TODO Shouldn't WebGL support arrays?
+		gl.uniform2iv(loc, v);
 	}
 
 	@Override
@@ -1110,7 +1111,7 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform3fv (final int location, final int count, final float[] v, final int offset) {
 		final WebGLUniformLocation loc = getUniformLocation(location);
-		gl.uniform3fv(loc, TypedArrays.copy(v)); // TODO Shouldn't WebGL support arrays?
+		gl.uniform3fv(loc, v);
 	}
 
 	@Override
@@ -1128,7 +1129,7 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform3iv (final int location, final int count, final int[] v, final int offset) {
 		final WebGLUniformLocation loc = getUniformLocation(location);
-		gl.uniform3iv(loc, TypedArrays.copy(v)); // TODO Shouldn't WebGL support arrays?
+		gl.uniform3iv(loc, v);
 	}
 
 	@Override
@@ -1146,7 +1147,7 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform4fv (final int location, final int count, final float[] v, final int offset) {
 		final WebGLUniformLocation loc = getUniformLocation(location);
-		gl.uniform4fv(loc, TypedArrays.copy(v)); // TODO Shouldn't WebGL support arrays?
+		gl.uniform4fv(loc, v);
 	}
 
 	@Override
@@ -1164,7 +1165,7 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform4iv (final int location, final int count, final int[] v, final int offset) {
 		final WebGLUniformLocation loc = getUniformLocation(location);
-		gl.uniform4iv(loc, TypedArrays.copy(v)); // TODO Shouldn't WebGL support arrays?
+		gl.uniform4iv(loc, v);
 	}
 
 	@Override
@@ -1177,7 +1178,7 @@ public class DragomeGL20 implements GL20 {
 	public void glUniformMatrix2fv (final int location, final int count, final boolean transpose, final float[] value,
 		final int offset) {
 		final WebGLUniformLocation loc = getUniformLocation(location);
-		gl.uniformMatrix2fv(loc, transpose, TypedArrays.copy(value)); // TODO Shouldn't WebGL support arrays?
+		gl.uniformMatrix2fv(loc, transpose, value);
 	}
 
 	@Override
@@ -1190,7 +1191,7 @@ public class DragomeGL20 implements GL20 {
 	public void glUniformMatrix3fv (final int location, final int count, final boolean transpose, final float[] value,
 		final int offset) {
 		final WebGLUniformLocation loc = getUniformLocation(location);
-		gl.uniformMatrix3fv(loc, transpose, TypedArrays.copy(value)); // TODO Shouldn't WebGL support arrays?
+		gl.uniformMatrix3fv(loc, transpose, value);
 	}
 
 	@Override
@@ -1203,7 +1204,7 @@ public class DragomeGL20 implements GL20 {
 	public void glUniformMatrix4fv (final int location, final int count, final boolean transpose, final float[] value,
 		final int offset) {
 		final WebGLUniformLocation loc = getUniformLocation(location);
-		gl.uniformMatrix4fv(loc, transpose, TypedArrays.copy(value)); // TODO Shouldn't WebGL support arrays?
+		gl.uniformMatrix4fv(loc, transpose, value);
 	}
 
 	@Override
