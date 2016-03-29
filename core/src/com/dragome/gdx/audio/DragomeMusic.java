@@ -17,7 +17,7 @@ public class DragomeMusic implements Music, Runnable {
 	private final Runnable onEnded;
 
 	public DragomeMusic (final FileHandle file) {
-		element = (HTMLAudioElement)ScriptHelper.eval("document.createElement('audio');", this);
+		element = ScriptHelper.evalCasting("document.createElement('audio');", HTMLAudioElement.class, this);
 		element.setSrc(file.path()); // TODO Correct path after Files implementation (if necessary).
 		onEnded = this;
 		ScriptHelper.put("_elem", element, this);

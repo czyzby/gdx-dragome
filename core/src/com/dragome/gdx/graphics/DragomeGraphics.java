@@ -68,7 +68,7 @@ public class DragomeGraphics implements Graphics {
 	/** Sets {@link WebGLContextAttributes} according to {@link DragomeApplicationConfiguration}.
 	 * @return a configuration object with WebGL attributes. */
 	protected WebGLContextAttributes getWebGlAttributes (final DragomeApplicationConfiguration configuration) {
-		final WebGLContextAttributes attributes = (WebGLContextAttributes)ScriptHelper.eval("{};", this);
+		final WebGLContextAttributes attributes = ScriptHelper.evalCasting("{};", WebGLContextAttributes.class, this);
 		attributes.setAlpha(configuration.isAlphaEnabled());
 		attributes.setAntialias(configuration.isAntialiasEnabled());
 		attributes.setStencil(configuration.isStencil());
@@ -84,7 +84,7 @@ public class DragomeGraphics implements Graphics {
 			public void handleEvent (final Event event) {
 			fullscreenChanged();
 			}
-		}, "fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange");
+		}, "fullscreenchange"/*, "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange"*/);
 	}
 
 	/** @param context WebGL rendering context from application's main canvas.

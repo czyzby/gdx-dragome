@@ -36,7 +36,7 @@ public class DragomeNet implements Net {
 			httpResponseListener.failed(new GdxRuntimeException("Unable to send request without URL, method or listener."));
 			return;
 		}
-		final XMLHttpRequest request = (XMLHttpRequest)ScriptHelper.eval("new XMLHttpRequest();", this);
+		final XMLHttpRequest request = ScriptHelper.evalCasting("new XMLHttpRequest();", XMLHttpRequest.class, this);
 		request.setOnreadystatechange(new EventHandler() {
 			@Override
 			public void handleEvent (final Event evt) {
