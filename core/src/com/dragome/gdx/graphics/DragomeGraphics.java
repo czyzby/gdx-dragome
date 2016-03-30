@@ -78,13 +78,17 @@ public class DragomeGraphics implements Graphics {
 	}
 
 	private void addFullscreenListener () {
-		// TODO I think this listener should be added to document rather than window.
-		Window.getInstance().addEventListener(new EventListener() {
+		final Window window = Window.getInstance();
+		final EventListener listener = new EventListener() {
 			@Override
 			public void handleEvent (final Event event) {
 			fullscreenChanged();
 			}
-		}, "fullscreenchange"/*, "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange"*/);
+		};
+		for (final String event : new String[] {"fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange",
+			"msfullscreenchange"}) {
+			window.addEventListener(listener, event);
+		}
 	}
 
 	/** @param context WebGL rendering context from application's main canvas.
