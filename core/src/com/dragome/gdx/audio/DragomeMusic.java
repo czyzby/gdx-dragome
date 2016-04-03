@@ -17,12 +17,12 @@ public class DragomeMusic implements Music, Runnable {
 	private final Runnable onEnded;
 
 	public DragomeMusic (final FileHandle file) {
-		element = ScriptHelper.evalCasting("document.createElement('audio');", HTMLAudioElement.class, this);
+		element = ScriptHelper.evalCasting("document.createElement('audio')", HTMLAudioElement.class, this);
 		element.setSrc(file.path()); // TODO Correct path after Files implementation (if necessary).
 		onEnded = this;
 		ScriptHelper.put("_elem", element, this);
 		ScriptHelper.put("_end", onEnded, this);
-		ScriptHelper.evalNoResult("_elem.onended=function(){_end.$run$void();};document.body.appendChild(_elem);", this);
+		ScriptHelper.evalNoResult("_elem.onended=function(){_end.$run$void();};document.body.appendChild(_elem)", this);
 	}
 
 	@Override

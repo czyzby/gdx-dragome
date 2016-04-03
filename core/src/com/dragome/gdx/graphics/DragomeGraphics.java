@@ -68,7 +68,7 @@ public class DragomeGraphics implements Graphics {
 	/** Sets {@link WebGLContextAttributes} according to {@link DragomeApplicationConfiguration}.
 	 * @return a configuration object with WebGL attributes. */
 	protected WebGLContextAttributes getWebGlAttributes (final DragomeApplicationConfiguration configuration) {
-		final WebGLContextAttributes attributes = ScriptHelper.evalCasting("{};", WebGLContextAttributes.class, this);
+		final WebGLContextAttributes attributes = ScriptHelper.evalCasting("{}", WebGLContextAttributes.class, this);
 		attributes.setAlpha(configuration.isAlphaEnabled());
 		attributes.setAntialias(configuration.isAntialiasEnabled());
 		attributes.setStencil(configuration.isStencil());
@@ -78,18 +78,17 @@ public class DragomeGraphics implements Graphics {
 	}
 
 	private void addFullscreenListener () {
-		// TODO I think this listener should be added to document rather than window.
-		Window window= Window.getInstance();
-		EventListener eventListener= new EventListener() {
+		final Window window = Window.getInstance();
+		final EventListener listener = new EventListener() {
 			@Override
 			public void handleEvent (final Event event) {
 			fullscreenChanged();
 			}
 		};
-		window.addEventListener(eventListener, "fullscreenchange");
-		window.addEventListener(eventListener, "webkitfullscreenchange");
-		window.addEventListener(eventListener, "mozfullscreenchange");
-		window.addEventListener(eventListener, "msfullscreenchange");
+		for (final String event : new String[] {"fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange",
+			"msfullscreenchange"}) {
+			window.addEventListener(listener, event);
+		}
 	}
 
 	/** @param context WebGL rendering context from application's main canvas.

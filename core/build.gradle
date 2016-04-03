@@ -4,6 +4,8 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.resources.srcDirs = [ "resources/" ]
+
 sourceCompatibility = 1.6
 
 ext {
@@ -21,9 +23,22 @@ configurations {
 }
 
 repositories {
+  mavenLocal()
+}
+
+repositories {
     mavenCentral()
-    jcenter()
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://raw.github.com/dragome/dragome/master/maven" }
 }
 
 jar {
@@ -42,12 +57,19 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-artifacts {
-    archives javadocJar, sourcesJar
+task generateStandalone(type:JavaExec) {
+   main = "com.dragome.web.helpers.serverside.StandaloneDragomeAppGenerator"
+   classpath = sourceSets.main.runtimeClasspath
+   args = [
+   "./dist",
+   "./webapp",
+   "true",
+   "true"
+   ].toList()
 }
 
-signing {
-    sign configurations.archives
+artifacts {
+    archives javadocJar, sourcesJar
 }
 
 eclipse.project.name = "gdx-backend-dragome"
@@ -55,8 +77,8 @@ eclipse.project.name = "gdx-backend-dragome"
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile "com.dragome:dragome-js-jre:$dragomeVersion"
-    compile "com.dragome:dragome-guia:$dragomeVersion"
     compile "com.dragome:dragome-web:$dragomeVersion"
+    compile "com.dragome:dragome-bytecode-js-compiler:$dragomeVersion"
 
     deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
     deployerJars "org.apache.maven.wagon:wagon-http:2.2"
@@ -65,7 +87,6 @@ dependencies {
 uploadArchives {
   repositories {
     mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
       repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
         authentication(userName: ossrhUsername, password: ossrhPassword)
@@ -87,7 +108,7 @@ uploadArchives {
             url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
           }
         }
-        
+
         scm {
           connection 'scm:git:git@github.com:czyzby/gdx-dragome.git'
           developerConnection 'scm:git:git@github.com:czyzby/gdx-dragome.git'
