@@ -3,8 +3,9 @@ package com.dragome.gdx;
 import java.net.URL;
 
 import com.dragome.commons.DragomeConfiguratorImplementor;
-import com.dragome.commons.compiler.ClassPath;
 import com.dragome.commons.compiler.PrioritySolver;
+import com.dragome.commons.compiler.classpath.Classpath;
+import com.dragome.commons.compiler.classpath.ClasspathEntry;
 import com.dragome.web.config.DomHandlerApplicationConfigurator;
 
 @DragomeConfiguratorImplementor(priority= 10)
@@ -21,15 +22,15 @@ public class DragomeConfiguration extends DomHandlerApplicationConfigurator
 		return include;
 	}
 
-	public void sortClassPath(ClassPath classPath)
+	public void sortClassPath(Classpath classPath)
 	{
 		classPath.sortByPriority(new PrioritySolver()
 		{
-			public int getPriorityOf(String string)
+			public int getPriorityOf(ClasspathEntry string)
 			{
-				if (!string.contains(".jar"))
+				if (!string.getName().contains(".jar"))
 					return 2;
-				else if (string.contains("dragome-"))
+				else if (string.getName().contains("dragome-"))
 					return 1;
 				else
 					return 0;
