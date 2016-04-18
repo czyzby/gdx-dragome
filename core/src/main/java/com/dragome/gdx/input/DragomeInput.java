@@ -13,6 +13,7 @@ import com.dragome.gdx.DragomeApplication;
 
 /** Handles {@link Input} events in the Dragome application. Supports only keyboard and touch events.
  * @author MJ */
+@SuppressWarnings("unused")
 public class DragomeInput implements ResettableInput {
 	private static final int MAX_TOUCHES = 20;
 
@@ -39,7 +40,90 @@ public class DragomeInput implements ResettableInput {
 
 	public DragomeInput (final DragomeApplication application) {
 		canvas = application.getCanvas();
+		addEventListeners();
 	}
+
+	/** Adds input event listeners. */
+	protected void addEventListeners () {
+		// TODO implement event listeners
+		// canvas.addEventListener(canvas, "mousedown", this, true);
+		// addEventListener(Document.get(), "mousedown", this, true);
+		// addEventListener(canvas, "mouseup", this, true);
+		// addEventListener(Document.get(), "mouseup", this, true);
+		// addEventListener(canvas, "mousemove", this, true);
+		// addEventListener(Document.get(), "mousemove", this, true);
+		// addEventListener(canvas, getMouseWheelEvent(), this, true);
+		// addEventListener(Document.get(), "keydown", this, false);
+		// addEventListener(Document.get(), "keyup", this, false);
+		// addEventListener(Document.get(), "keypress", this, false);
+		//
+		// addEventListener(canvas, "touchstart", this, true);
+		// addEventListener(canvas, "touchmove", this, true);
+		// addEventListener(canvas, "touchcancel", this, true);
+		// addEventListener(canvas, "touchend", this, true);
+	}
+	/*
+	 * TODO separate into multiple listeners.
+	 *
+	 * private void handleEvent (NativeEvent e) { if (e.getType().equals("mousedown")) { if (!e.getEventTarget().equals(canvas) ||
+	 * touched[0]) { float mouseX = getRelativeX(e, canvas); float mouseY = getRelativeY(e, canvas); if (mouseX < 0 || mouseX >
+	 * Gdx.graphics.getWidth() || mouseY < 0 || mouseY > Gdx.graphics.getHeight()) { hasFocus = false; } return; } hasFocus = true;
+	 * this.justTouched = true; this.touched[0] = true; this.pressedButtons.add(getButton(e.getButton())); this.deltaX[0] = 0;
+	 * this.deltaY[0] = 0; if (isCursorCatched()) { this.touchX[0] += getMovementXJSNI(e); this.touchY[0] += getMovementYJSNI(e); }
+	 * else { this.touchX[0] = getRelativeX(e, canvas); this.touchY[0] = getRelativeY(e, canvas); } this.currentEventTimeStamp =
+	 * TimeUtils.nanoTime(); if (processor != null) processor.touchDown(touchX[0], touchY[0], 0, getButton(e.getButton())); }
+	 *
+	 * if (e.getType().equals("mousemove")) { if (isCursorCatched()) { this.deltaX[0] = (int)getMovementXJSNI(e); this.deltaY[0] =
+	 * (int)getMovementYJSNI(e); this.touchX[0] += getMovementXJSNI(e); this.touchY[0] += getMovementYJSNI(e); } else {
+	 * this.deltaX[0] = getRelativeX(e, canvas) - touchX[0]; this.deltaY[0] = getRelativeY(e, canvas) - touchY[0]; this.touchX[0] =
+	 * getRelativeX(e, canvas); this.touchY[0] = getRelativeY(e, canvas); } this.currentEventTimeStamp = TimeUtils.nanoTime(); if
+	 * (processor != null) { if (touched[0]) processor.touchDragged(touchX[0], touchY[0], 0); else processor.mouseMoved(touchX[0],
+	 * touchY[0]); } }
+	 *
+	 * if (e.getType().equals("mouseup")) { if (!touched[0]) return; this.pressedButtons.remove(getButton(e.getButton()));
+	 * this.touched[0] = pressedButtons.size > 0; if (isCursorCatched()) { this.deltaX[0] = (int)getMovementXJSNI(e);
+	 * this.deltaY[0] = (int)getMovementYJSNI(e); this.touchX[0] += getMovementXJSNI(e); this.touchY[0] += getMovementYJSNI(e); }
+	 * else { this.deltaX[0] = getRelativeX(e, canvas) - touchX[0]; this.deltaY[0] = getRelativeY(e, canvas) - touchY[0];
+	 * this.touchX[0] = getRelativeX(e, canvas); this.touchY[0] = getRelativeY(e, canvas); } this.currentEventTimeStamp =
+	 * TimeUtils.nanoTime(); this.touched[0] = false; if (processor != null) processor.touchUp(touchX[0], touchY[0], 0,
+	 * getButton(e.getButton())); } if (e.getType().equals(getMouseWheelEvent())) { if (processor != null) {
+	 * processor.scrolled((int)getMouseWheelVelocity(e)); } this.currentEventTimeStamp = TimeUtils.nanoTime(); e.preventDefault();
+	 * } if (e.getType().equals("keydown") && hasFocus) { // System.out.println("keydown"); int code = keyForCode(e.getKeyCode());
+	 * if (code == 67) { e.preventDefault(); if (processor != null) { processor.keyDown(code); processor.keyTyped('\b'); } } else {
+	 * if (!pressedKeys[code]) { pressedKeyCount++; pressedKeys[code] = true; keyJustPressed = true; justPressedKeys[code] = true;
+	 * if (processor != null) { processor.keyDown(code); } } } }
+	 *
+	 * if (e.getType().equals("keypress") && hasFocus) { // System.out.println("keypress"); char c = (char)e.getCharCode(); if
+	 * (processor != null) processor.keyTyped(c); }
+	 *
+	 * if (e.getType().equals("keyup") && hasFocus) { // System.out.println("keyup"); int code = keyForCode(e.getKeyCode()); if
+	 * (pressedKeys[code]) { pressedKeyCount--; pressedKeys[code] = false; } if (processor != null) { processor.keyUp(code); } }
+	 *
+	 * if (e.getType().equals("touchstart")) { this.justTouched = true; JsArray<Touch> touches = e.getChangedTouches(); for (int i
+	 * = 0, j = touches.length(); i < j; i++) { Touch touch = touches.get(i); int real = touch.getIdentifier(); int touchId;
+	 * touchMap.put(real, touchId = getAvailablePointer()); touched[touchId] = true; touchX[touchId] = getRelativeX(touch, canvas);
+	 * touchY[touchId] = getRelativeY(touch, canvas); deltaX[touchId] = 0; deltaY[touchId] = 0; if (processor != null) {
+	 * processor.touchDown(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT); } } this.currentEventTimeStamp =
+	 * TimeUtils.nanoTime(); e.preventDefault(); } if (e.getType().equals("touchmove")) { JsArray<Touch> touches =
+	 * e.getChangedTouches(); for (int i = 0, j = touches.length(); i < j; i++) { Touch touch = touches.get(i); int real =
+	 * touch.getIdentifier(); int touchId = touchMap.get(real); deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
+	 * deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId]; touchX[touchId] = getRelativeX(touch, canvas);
+	 * touchY[touchId] = getRelativeY(touch, canvas); if (processor != null) { processor.touchDragged(touchX[touchId],
+	 * touchY[touchId], touchId); } } this.currentEventTimeStamp = TimeUtils.nanoTime(); e.preventDefault(); } if
+	 * (e.getType().equals("touchcancel")) { JsArray<Touch> touches = e.getChangedTouches(); for (int i = 0, j = touches.length();
+	 * i < j; i++) { Touch touch = touches.get(i); int real = touch.getIdentifier(); int touchId = touchMap.get(real);
+	 * touchMap.remove(real); touched[touchId] = false; deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
+	 * deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId]; touchX[touchId] = getRelativeX(touch, canvas);
+	 * touchY[touchId] = getRelativeY(touch, canvas); if (processor != null) { processor.touchUp(touchX[touchId], touchY[touchId],
+	 * touchId, Buttons.LEFT); } } this.currentEventTimeStamp = TimeUtils.nanoTime(); e.preventDefault(); } if
+	 * (e.getType().equals("touchend")) { JsArray<Touch> touches = e.getChangedTouches(); for (int i = 0, j = touches.length(); i <
+	 * j; i++) { Touch touch = touches.get(i); int real = touch.getIdentifier(); int touchId = touchMap.get(real);
+	 * touchMap.remove(real); touched[touchId] = false; deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
+	 * deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId]; touchX[touchId] = getRelativeX(touch, canvas);
+	 * touchY[touchId] = getRelativeY(touch, canvas); if (processor != null) { processor.touchUp(touchX[touchId], touchY[touchId],
+	 * touchId, Buttons.LEFT); } } this.currentEventTimeStamp = TimeUtils.nanoTime(); e.preventDefault(); } // if(hasFocus)
+	 * e.preventDefault(); }
+	 */
 
 	@Override
 	public void setInputProcessor (final InputProcessor processor) {
@@ -53,82 +137,105 @@ public class DragomeInput implements ResettableInput {
 
 	@Override
 	public void reset () {
-		// XXX
+		justTouched = false;
+		if (keyJustPressed) {
+			keyJustPressed = false;
+			for (int i = 0; i < justPressedKeys.length; i++) {
+				justPressedKeys[i] = false;
+			}
+		}
 	}
 
 	@Override
 	public int getX () {
-		return 0; // TODO implement mouse
+		return touchX[0];
 	}
 
 	@Override
 	public int getX (final int pointer) {
-		return 0; // TODO implement mouse
+		return touchX[pointer];
 	}
 
 	@Override
 	public int getDeltaX () {
-		return 0;// TODO implement mouse
+		return deltaX[0];
 	}
 
 	@Override
 	public int getDeltaX (final int pointer) {
-		return 0;// TODO implement mouse
+		return deltaX[pointer];
 	}
 
 	@Override
 	public int getY () {
-		return 0; // TODO implement mouse
+		return touchY[0];
 	}
 
 	@Override
 	public int getY (final int pointer) {
-		return 0; // TODO implement mouse
+		return touchY[pointer];
 	}
 
 	@Override
 	public int getDeltaY () {
-		return 0; // TODO implement mouse
+		return deltaY[0];
 	}
 
 	@Override
 	public int getDeltaY (final int pointer) {
-		return 0; // TODO implement mouse
+		return deltaY[pointer];
 	}
 
 	@Override
 	public boolean isTouched () {
-		return false; // TODO implement mouse
+		for (int pointer = 0; pointer < MAX_TOUCHES; pointer++) {
+			if (touched[pointer]) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public boolean justTouched () {
-		return false; // TODO implement mouse
+		return justTouched;
 	}
 
 	@Override
 	public boolean isTouched (final int pointer) {
-		return false; // TODO implement mouse
+		return touched[pointer];
 	}
 
 	@Override
 	public boolean isButtonPressed (final int button) {
-		return false; // TODO implement keyboard
+		return pressedButtons.contains(button) && touched[0];
 	}
 
 	@Override
 	public boolean isKeyPressed (final int key) {
-		return false; // TODO implement keyboard
+		if (key == Keys.ANY_KEY) {
+			return pressedKeyCount > 0;
+		}
+		if (key < 0 || key > 255) {
+			return false;
+		}
+		return pressedKeys[key];
 	}
 
 	@Override
 	public boolean isKeyJustPressed (final int key) {
-		return false; // TODO implement keyboard
+		if (key == Keys.ANY_KEY) {
+			return keyJustPressed;
+		}
+		if (key < 0 || key > 255) {
+			return false;
+		}
+		return justPressedKeys[key];
 	}
 
 	@Override
 	public void getTextInput (final TextInputListener listener, final String title, final String text, final String hint) {
-		// TODO implement keyboard
+		Gdx.app.error(DragomeApplication.LOGGING_TAG, "DragomeInput#getTextInput is not supported.");
 	}
 
 	@Override
@@ -143,7 +250,7 @@ public class DragomeInput implements ResettableInput {
 
 	@Override
 	public long getCurrentEventTime () {
-		return 0; // TODO implement current event time
+		return currentEventTimeStamp;
 	}
 
 	@Override
