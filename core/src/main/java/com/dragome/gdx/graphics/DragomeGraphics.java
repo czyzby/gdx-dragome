@@ -65,6 +65,7 @@ public class DragomeGraphics implements Graphics {
 	}
 
 	/** Sets {@link WebGLContextAttributes} according to {@link DragomeApplicationConfiguration}.
+	 * @param configuration used to set up WebGL attributes.
 	 * @return a configuration object with WebGL attributes. */
 	protected WebGLContextAttributes getWebGlAttributes (final DragomeApplicationConfiguration configuration) {
 		final WebGLContextAttributes attributes = ScriptHelper.evalCasting("{}", WebGLContextAttributes.class, this);
@@ -299,7 +300,8 @@ public class DragomeGraphics implements Graphics {
 		return false;
 	}
 
-	/** Attempts to enter fullscreen mode. Returns true if attempted to enter fullscreen mode. */
+	/** Attempts to enter fullscreen mode. Returns true if attempted to enter fullscreen mode.
+	 * @return true if tried to switch to fullscreen mode. */
 	public boolean enterFullscreen () {
 		if (supportsDisplayModeChange()) {
 			oldWidth = canvas.getWidth();
