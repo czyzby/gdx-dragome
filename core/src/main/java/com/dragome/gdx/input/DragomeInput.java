@@ -1,16 +1,45 @@
 
 package com.dragome.gdx.input;
 
+import org.w3c.dom.html.HTMLCanvasElement;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.IntSet;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.gdx.DragomeApplication;
 
 /** Handles {@link Input} events in the Dragome application. Supports only keyboard and touch events.
  * @author MJ */
-public class DragomeInput implements Input {
+public class DragomeInput implements ResettableInput {
+	private static final int MAX_TOUCHES = 20;
+
+	private final HTMLCanvasElement canvas;
 	private InputProcessor processor;
+
+	private final IntMap<Integer> touchMap = new IntMap<Integer>(20);
+	private final IntSet pressedButtons = new IntSet();
+	private final boolean[] touched = new boolean[MAX_TOUCHES];
+	private final int[] touchX = new int[MAX_TOUCHES];
+	private final int[] touchY = new int[MAX_TOUCHES];
+	private final int[] deltaX = new int[MAX_TOUCHES];
+	private final int[] deltaY = new int[MAX_TOUCHES];
+	private final boolean[] pressedKeys = new boolean[256];
+	private final boolean[] justPressedKeys = new boolean[256];
+
+	private final boolean hasFocus = true;
+	private boolean justTouched;
+	private int pressedKeyCount;
+	private boolean keyJustPressed;
+	private char lastKeyCharPressed;
+	private float keyRepeatTimer;
+	private long currentEventTimeStamp;
+
+	public DragomeInput (final DragomeApplication application) {
+		canvas = application.getCanvas();
+	}
 
 	@Override
 	public void setInputProcessor (final InputProcessor processor) {
@@ -20,6 +49,11 @@ public class DragomeInput implements Input {
 	@Override
 	public InputProcessor getInputProcessor () {
 		return processor;
+	}
+
+	@Override
+	public void reset () {
+		// XXX
 	}
 
 	@Override

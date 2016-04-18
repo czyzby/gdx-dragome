@@ -32,8 +32,7 @@ public class DragomeApplicationConfiguration {
 		return this;
 	}
 
-	/** @param canvasId HTML selector that should return a single HTML canvas element. By default, this value is set to '
-	 *           {@literal #}dragomeCanvas'.
+	/** @param canvasId HTML selector that should return a single HTML canvas element. By default, '{@literal #}dragome'.
 	 * @return this, for chaining. */
 	public DragomeApplicationConfiguration setCanvasId (final String canvasId) {
 		this.canvasId = canvasId;

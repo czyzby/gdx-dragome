@@ -1,6 +1,8 @@
 
 package com.dragome.gdx;
 
+import org.w3c.dom.html.HTMLCanvasElement;
+
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Audio;
@@ -19,6 +21,7 @@ import com.dragome.gdx.files.DragomeFiles;
 import com.dragome.gdx.graphics.DragomeGraphics;
 import com.dragome.gdx.graphics.resizing.ResizeListener;
 import com.dragome.gdx.input.DragomeInput;
+import com.dragome.gdx.input.ResettableInput;
 import com.dragome.gdx.lifecycle.DebugDragomeRenderer;
 import com.dragome.gdx.lifecycle.DragomeRenderer;
 import com.dragome.gdx.lifecycle.LifecycleManager;
@@ -52,8 +55,8 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 	private final Net net;
 	private final Audio audio;
 	private final Files files;
-	private final Input input;
 	private final Graphics graphics;
+	private final ResettableInput input;
 	// Helpers:
 	private final BrowserDomHandler domBrowser = new BrowserDomHandler();
 	private final DragomeApplicationConfiguration configuration;
@@ -79,13 +82,19 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 		preferencesResolver = createPreferencesResolver();
 		lifecycleManager = createLifecycleManager();
 		clipboard = createClipboard();
-		renderer = createRenderer();
 
 		net = createNet();
 		audio = createAudio();
 		files = createFiles();
 		input = createInput();
 		graphics = createGraphics();
+		renderer = createRenderer();
+	}
+
+	/** @return {@link HTMLCanvasElement} defined in {@link DragomeApplicationConfiguration}.
+	 * @see DragomeApplicationConfiguration#setCanvasId(String) */
+	public HTMLCanvasElement getCanvas () {
+		return (HTMLCanvasElement)getDomBrowser().getElementBySelector(getConfiguration().getCanvasId());
 	}
 
 	@Override
@@ -104,7 +113,7 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 	 * @see DragomeRenderer
 	 * @see DebugDragomeRenderer */
 	protected Renderer createRenderer () {
-		return new DragomeRenderer(applicationListener);
+		return new DragomeRenderer(this);
 	}
 
 	/** @return a new instance of manager that maintains {@link LifecycleListener}s and is notified about application lifecycle
@@ -151,9 +160,10 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 	}
 
 	/** @return a new instance of {@link Input} implementation, handling user's input.
-	 * @see DragomeInput */
-	protected Input createInput () {
-		return new DragomeInput();
+	 * @see DragomeInput
+	 * @see ResettableInput */
+	protected ResettableInput createInput () {
+		return new DragomeInput(this);
 	}
 
 	@Override
@@ -167,7 +177,7 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 	}
 
 	@Override
-	public Input getInput () {
+	public ResettableInput getInput () {
 		return input;
 	}
 

@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.gdx.DragomeApplication;
+import com.dragome.gdx.input.ResettableInput;
 import com.dragome.web.html.dom.Window;
 
 /** Default {@link Renderer} implementation for Dragome applications. Manages main loop. Note that it always reports 0 for every
@@ -20,6 +21,7 @@ public class DragomeRenderer implements Renderer {
 	private final Array<Runnable> runnablesToInvoke = new Array<Runnable>();
 	private float deltaTime;
 	private long lastRender;
+	private final ResettableInput input;
 	private final Runnable loopRunnable = Window.wrapRunnableForDebugging(new Runnable() {
 		@Override
 		public void run () {
@@ -33,9 +35,10 @@ public class DragomeRenderer implements Renderer {
 		}
 	});
 
-	/** @param listener will be informed of rendering events. */
-	public DragomeRenderer (final ApplicationListener listener) {
-		this.listener = listener;
+	/** @param application its listener will be informed of rendering events. */
+	public DragomeRenderer (final DragomeApplication application) {
+		listener = application.getApplicationListener();
+		input = application.getInput();
 		addDatePolyfill();
 		addAnimationPolyfill();
 	}
@@ -115,6 +118,7 @@ public class DragomeRenderer implements Renderer {
 			runnablesToInvoke.clear();
 		}
 		listener.render();
+		input.reset();
 		requestAnimationFrame(loopRunnable);
 	}
 

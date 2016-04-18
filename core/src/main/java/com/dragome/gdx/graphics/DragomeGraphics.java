@@ -54,7 +54,7 @@ public class DragomeGraphics implements Graphics {
 
 	public DragomeGraphics (final DragomeApplication application) {
 		this.application = application;
-		canvas = (HTMLCanvasElement)application.getDomBrowser().getElementBySelector(application.getConfiguration().getCanvasId());
+		canvas = application.getCanvas();
 		renderer = application.getRenderer();
 		oldWidth = canvas.getWidth();
 		oldHeight = canvas.getHeight();
@@ -281,8 +281,6 @@ public class DragomeGraphics implements Graphics {
 
 	@Override
 	public void requestRendering () {
-		application.error(DragomeApplication.LOGGING_TAG,
-			"Note: Graphics#requestRendering is not supported in Dragome. Application is always in continuous rendering mode.");
 	}
 
 	@Override

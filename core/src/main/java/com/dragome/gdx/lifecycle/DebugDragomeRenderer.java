@@ -1,7 +1,7 @@
 
 package com.dragome.gdx.lifecycle;
 
-import com.badlogic.gdx.ApplicationListener;
+import com.dragome.gdx.DragomeApplication;
 
 /** Additionally to managing application's main loop, this renderer keeps track of current frame ID and FPS value.
  *
@@ -12,9 +12,9 @@ public class DebugDragomeRenderer extends DragomeRenderer {
 	private int frames;
 	private int fps;
 
-	/** @param listener will be informed of rendering events. */
-	public DebugDragomeRenderer (final ApplicationListener listener) {
-		super(listener);
+	/** @param application its listener will be informed of rendering events. */
+	public DebugDragomeRenderer (final DragomeApplication application) {
+		super(application);
 	}
 
 	@Override
