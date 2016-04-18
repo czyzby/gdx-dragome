@@ -70,7 +70,7 @@ public class DragomePreferences extends AbstractPreferences {
 			ScriptHelper.put("_i", i, this);
 			final String key = String.valueOf(ScriptHelper.eval("localStorage.key(_i)", this));
 			if (key.startsWith(name)) {
-			preferences.put(key, getString(key));
+				preferences.put(key, getString(key));
 			}
 		}
 	}

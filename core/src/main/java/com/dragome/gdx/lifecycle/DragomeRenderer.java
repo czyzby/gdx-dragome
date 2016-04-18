@@ -24,11 +24,11 @@ public class DragomeRenderer implements Renderer {
 		@Override
 		public void run () {
 			try {
-			loop();
+				loop();
 			} catch (final GdxRuntimeException exception) {
-			throw exception;
+				throw exception;
 			} catch (final Exception exception) {
-			throw new GdxRuntimeException("Exception occurred on rendering loop.", exception);
+				throw new GdxRuntimeException("Exception occurred on rendering loop.", exception);
 			}
 		}
 	});
@@ -89,8 +89,8 @@ public class DragomeRenderer implements Renderer {
 		return ScriptHelper.evalLong("Date.now();", this);
 	}
 
-	/** @param runnable will be executed as the animation frame. If it is the main loop runnable, it should recursively invoke
-	 *           this method passing itself as the parameter. */
+	/** @param runnable will be executed as the animation frame. If it is the main loop runnable, it should recursively invoke this
+	 *           method passing itself as the parameter. */
 	protected void requestAnimationFrame (final Runnable runnable) {
 		ScriptHelper.put("_loop", runnable, this);
 		ScriptHelper.evalNoResult("this._frameId=window.requestAnimationFrame(function(){_loop.$run$void();})", this);
@@ -110,7 +110,7 @@ public class DragomeRenderer implements Renderer {
 			runnablesToInvoke.addAll(runnables);
 			runnables.clear();
 			for (final Runnable runnable : runnablesToInvoke) {
-			runnable.run();
+				runnable.run();
 			}
 			runnablesToInvoke.clear();
 		}

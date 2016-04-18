@@ -30,9 +30,9 @@ public abstract class AbstractLogger implements DragomeLogger {
 	public void log (final int level, final String tag, final String message, final Throwable exception) {
 		if (this.level >= level) {
 			if (exception == null) {
-			log(tag, message);
+				log(tag, message);
 			} else {
-			log(tag, message, exception);
+				log(tag, message, exception);
 			}
 		}
 	}

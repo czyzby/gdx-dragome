@@ -18,8 +18,8 @@ public class PreferencesResolver {
 	}
 
 	/** @param name ID of the preferences. Has to be valid local storage key.
-	 * @return {@link Preferences} implementation for the given ID. If locale storage is not supported, mock up preferences will
-	 *         be provided. Never returns null. */
+	 * @return {@link Preferences} implementation for the given ID. If locale storage is not supported, mock up preferences will be
+	 *         provided. Never returns null. */
 	public Preferences getPreferences (final String name) {
 		if (preferences.containsKey(name)) {
 			return preferences.get(name);

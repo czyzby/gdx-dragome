@@ -61,9 +61,9 @@ public class DragomeHttpResponse implements HttpResponse {
 		for (final String header : headerPairs) {
 			final int index = header.indexOf(": ");
 			if (index > 0) {
-			final String key = header.substring(0, index);
-			final String value = header.substring(index + 2);
-			getHeadersList(headers, key).add(value);
+				final String key = header.substring(0, index);
+				final String value = header.substring(index + 2);
+				getHeadersList(headers, key).add(value);
 			}
 		}
 		return headers;

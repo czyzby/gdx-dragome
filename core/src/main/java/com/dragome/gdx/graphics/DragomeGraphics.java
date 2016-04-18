@@ -54,8 +54,7 @@ public class DragomeGraphics implements Graphics {
 
 	public DragomeGraphics (final DragomeApplication application) {
 		this.application = application;
-		canvas = (HTMLCanvasElement)application.getDomBrowser()
-			.getElementBySelector(application.getConfiguration().getCanvasId());
+		canvas = (HTMLCanvasElement)application.getDomBrowser().getElementBySelector(application.getConfiguration().getCanvasId());
 		renderer = application.getRenderer();
 		oldWidth = canvas.getWidth();
 		oldHeight = canvas.getHeight();
@@ -82,7 +81,7 @@ public class DragomeGraphics implements Graphics {
 		final EventListener listener = new EventListener() {
 			@Override
 			public void handleEvent (final Event event) {
-			fullscreenChanged();
+				fullscreenChanged();
 			}
 		};
 		for (final String event : new String[] {"fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange",
@@ -260,7 +259,7 @@ public class DragomeGraphics implements Graphics {
 		if (extensions == null) {
 			final ObjectArray<String> availableExtensions = context.getSupportedExtensions();
 			for (int i = 0, l = availableExtensions.getLength(); i < l; i++) {
-			extensions.add(availableExtensions.getElement(i));
+				extensions.add(availableExtensions.getElement(i));
 			}
 		}
 		return extensions.contains(extension);
@@ -275,7 +274,7 @@ public class DragomeGraphics implements Graphics {
 	public void setContinuousRendering (final boolean isContinuous) {
 		if (!isContinuous) { // TODO GWT does not support this, should we?
 			application.error(DragomeApplication.LOGGING_TAG,
-			"Note: Graphics#setContinuousRendering is not supported in Dragome. Application is always in continuous rendering mode.");
+				"Note: Graphics#setContinuousRendering is not supported in Dragome. Application is always in continuous rendering mode.");
 		}
 	}
 
@@ -311,9 +310,9 @@ public class DragomeGraphics implements Graphics {
 			addResizeEvent(screenWidth, screenHeight);
 			ScriptHelper.put("_elem", canvas, this);
 			ScriptHelper.evalNoResult("if(_elem.requestFullscreen){_elem.requestFullscreen();}"
-			+ "else if(_elem.webkitRequestFullScreen){_elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);}"
-			+ "else if(_elem.mozRequestFullScreen){_elem.mozRequestFullScreen();}"
-			+ "else if(_elem.msRequestFullscreen){_elem.msRequestFullscreen();}", this);
+				+ "else if(_elem.webkitRequestFullScreen){_elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);}"
+				+ "else if(_elem.mozRequestFullScreen){_elem.mozRequestFullScreen();}"
+				+ "else if(_elem.msRequestFullscreen){_elem.msRequestFullscreen();}", this);
 			return true;
 		}
 		return false;
@@ -335,9 +334,9 @@ public class DragomeGraphics implements Graphics {
 			lockOrientation();
 		} else {
 			if (canvas.getWidth() != oldWidth || canvas.getHeight() != oldHeight) {
-			canvas.setWidth(oldWidth);
-			canvas.setHeight(oldHeight);
-			addResizeEvent(oldWidth, oldHeight);
+				canvas.setWidth(oldWidth);
+				canvas.setHeight(oldHeight);
+				addResizeEvent(oldWidth, oldHeight);
 			}
 			unlockOrientation();
 		}
@@ -350,8 +349,8 @@ public class DragomeGraphics implements Graphics {
 		if (orientation != null) {
 			ScriptHelper.put("_orient", orientation.getName(), this);
 			ScriptHelper.evalNoResult(
-			"var lock=screen.lockOrientation||screen.mozLockOrientation||screen.msLockOrientation||screen.webkitLockOrientation;if(lock){lock(_orient);}else if(screen.orientation&&screen.orientation.lock){screen.orientation.lock(_orient);}",
-			this);
+				"var lock=screen.lockOrientation||screen.mozLockOrientation||screen.msLockOrientation||screen.webkitLockOrientation;if(lock){lock(_orient);}else if(screen.orientation&&screen.orientation.lock){screen.orientation.lock(_orient);}",
+				this);
 		}
 	}
 
@@ -359,8 +358,8 @@ public class DragomeGraphics implements Graphics {
 	public void unlockOrientation () {
 		if (application.getConfiguration().getFullscreenOrientation() != null) {
 			ScriptHelper.evalNoResult(
-			"var unlock=screen.unlockOrientation||screen.mozUnlockOrientation||screen.msUnlockOrientation||screen.webkitUnlockOrientation;if(unlock){unlock();}else if(screen.orientation&&screen.orientation.unlock){screen.orientation.unlock();}",
-			this);
+				"var unlock=screen.unlockOrientation||screen.mozUnlockOrientation||screen.msUnlockOrientation||screen.webkitUnlockOrientation;if(unlock){unlock();}else if(screen.orientation&&screen.orientation.unlock){screen.orientation.unlock();}",
+				this);
 		}
 	}
 
@@ -444,11 +443,11 @@ public class DragomeGraphics implements Graphics {
 		@Override
 		public boolean equals (final Object object) {
 			if (object == this) {
-			return true;
+				return true;
 			} else if (object instanceof DisplayMode) {
-			final DisplayMode other = (DisplayMode)object;
-			return width == other.width && height == other.height && refreshRate == other.refreshRate
-				&& bitsPerPixel == other.bitsPerPixel;
+				final DisplayMode other = (DisplayMode)object;
+				return width == other.width && height == other.height && refreshRate == other.refreshRate
+					&& bitsPerPixel == other.bitsPerPixel;
 			}
 			return false;
 		}

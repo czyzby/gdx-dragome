@@ -40,12 +40,12 @@ public class DragomeNet implements Net {
 		request.setOnreadystatechange(new EventHandler() {
 			@Override
 			public void handleEvent (final Event evt) {
-			if (request.getReadyState() != XMLHttpRequest.DONE) {
-				return;
-			}
-			httpResponseListener.handleHttpResponse(new DragomeHttpResponse(request));
-			requests.remove(httpRequest);
-			listeners.remove(httpRequest);
+				if (request.getReadyState() != XMLHttpRequest.DONE) {
+					return;
+				}
+				httpResponseListener.handleHttpResponse(new DragomeHttpResponse(request));
+				requests.remove(httpRequest);
+				listeners.remove(httpRequest);
 			}
 		});
 		final boolean valueInUrl = HttpMethods.GET.equalsIgnoreCase(httpRequest.getMethod())

@@ -409,16 +409,15 @@ public class DragomeGL20 implements GL20 {
 			|| pname == GL20.GL_IMPLEMENTATION_COLOR_READ_FORMAT || pname == GL20.GL_IMPLEMENTATION_COLOR_READ_TYPE
 			|| pname == GL20.GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS || pname == GL20.GL_MAX_CUBE_MAP_TEXTURE_SIZE
 			|| pname == GL20.GL_MAX_FRAGMENT_UNIFORM_VECTORS || pname == GL20.GL_MAX_RENDERBUFFER_SIZE
-			|| pname == GL20.GL_MAX_TEXTURE_IMAGE_UNITS || pname == GL20.GL_MAX_TEXTURE_SIZE
-			|| pname == GL20.GL_MAX_VARYING_VECTORS || pname == GL20.GL_MAX_VERTEX_ATTRIBS
-			|| pname == GL20.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS || pname == GL20.GL_MAX_VERTEX_UNIFORM_VECTORS
-			|| pname == GL20.GL_NUM_COMPRESSED_TEXTURE_FORMATS || pname == GL20.GL_PACK_ALIGNMENT || pname == GL20.GL_RED_BITS
-			|| pname == GL20.GL_SAMPLE_BUFFERS || pname == GL20.GL_SAMPLES || pname == GL20.GL_STENCIL_BACK_FAIL
-			|| pname == GL20.GL_STENCIL_BACK_FUNC || pname == GL20.GL_STENCIL_BACK_PASS_DEPTH_FAIL
-			|| pname == GL20.GL_STENCIL_BACK_PASS_DEPTH_PASS || pname == GL20.GL_STENCIL_BACK_REF
-			|| pname == GL20.GL_STENCIL_BACK_VALUE_MASK || pname == GL20.GL_STENCIL_BACK_WRITEMASK
-			|| pname == GL20.GL_STENCIL_BITS || pname == GL20.GL_STENCIL_CLEAR_VALUE || pname == GL20.GL_STENCIL_FAIL
-			|| pname == GL20.GL_STENCIL_FUNC || pname == GL20.GL_STENCIL_PASS_DEPTH_FAIL
+			|| pname == GL20.GL_MAX_TEXTURE_IMAGE_UNITS || pname == GL20.GL_MAX_TEXTURE_SIZE || pname == GL20.GL_MAX_VARYING_VECTORS
+			|| pname == GL20.GL_MAX_VERTEX_ATTRIBS || pname == GL20.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS
+			|| pname == GL20.GL_MAX_VERTEX_UNIFORM_VECTORS || pname == GL20.GL_NUM_COMPRESSED_TEXTURE_FORMATS
+			|| pname == GL20.GL_PACK_ALIGNMENT || pname == GL20.GL_RED_BITS || pname == GL20.GL_SAMPLE_BUFFERS
+			|| pname == GL20.GL_SAMPLES || pname == GL20.GL_STENCIL_BACK_FAIL || pname == GL20.GL_STENCIL_BACK_FUNC
+			|| pname == GL20.GL_STENCIL_BACK_PASS_DEPTH_FAIL || pname == GL20.GL_STENCIL_BACK_PASS_DEPTH_PASS
+			|| pname == GL20.GL_STENCIL_BACK_REF || pname == GL20.GL_STENCIL_BACK_VALUE_MASK
+			|| pname == GL20.GL_STENCIL_BACK_WRITEMASK || pname == GL20.GL_STENCIL_BITS || pname == GL20.GL_STENCIL_CLEAR_VALUE
+			|| pname == GL20.GL_STENCIL_FAIL || pname == GL20.GL_STENCIL_FUNC || pname == GL20.GL_STENCIL_PASS_DEPTH_FAIL
 			|| pname == GL20.GL_STENCIL_PASS_DEPTH_PASS || pname == GL20.GL_STENCIL_REF || pname == GL20.GL_STENCIL_VALUE_MASK
 			|| pname == GL20.GL_STENCIL_WRITEMASK || pname == GL20.GL_SUBPIXEL_BITS || pname == GL20.GL_UNPACK_ALIGNMENT) {
 			params.put(0, (Integer)gl.getParameter(pname));
@@ -457,8 +456,7 @@ public class DragomeGL20 implements GL20 {
 		final Buffer pixels) {
 		// verify request
 		if (format != WebGLRenderingContext.RGBA || type != WebGLRenderingContext.UNSIGNED_BYTE) {
-			throw new GdxRuntimeException(
-			"Only format RGBA and type UNSIGNED_BYTE are currently supported for glReadPixels(...).");
+			throw new GdxRuntimeException("Only format RGBA and type UNSIGNED_BYTE are currently supported for glReadPixels(...).");
 		}
 		if (!(pixels instanceof ByteBuffer)) {
 			throw new GdxRuntimeException("Inputed pixels buffer needs to be of type ByteBuffer for glReadPixels(...).");

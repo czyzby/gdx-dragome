@@ -26,8 +26,8 @@ public class DragomeClipboard implements Clipboard {
 		try {
 			ScriptHelper.put("_cache", cachedContent, this);
 			final String content = String.valueOf(ScriptHelper.eval(
-			"if(window.clipboardData){return window.clipboardData.getData('Text');}else{document.body.appendChild(this._copy);try{this._copy.select();document.execCommand('paste');return this._copy.value;}catch(err){return _cache;}finally{document.body.removeChild(this._copy;}}",
-			this));
+				"if(window.clipboardData){return window.clipboardData.getData('Text');}else{document.body.appendChild(this._copy);try{this._copy.select();document.execCommand('paste');return this._copy.value;}catch(err){return _cache;}finally{document.body.removeChild(this._copy;}}",
+				this));
 			cachedContent = content;
 			return content;
 		} catch (final Throwable exception) {

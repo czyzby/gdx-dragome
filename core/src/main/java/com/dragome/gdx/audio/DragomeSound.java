@@ -63,8 +63,8 @@ public class DragomeSound implements Sound {
 		instance.setOnCompletionListener(new OnCompletionListener() {
 			@Override
 			public void onCompletion (final Music music) {
-			instances.remove(id);
-			instance.dispose();
+				instances.remove(id);
+				instance.dispose();
 			}
 		});
 		instances.put(id, instance);

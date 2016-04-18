@@ -1,0 +1,135 @@
+allprojects {
+  apply plugin: 'eclipse'
+  apply plugin: 'idea'
+}
+
+subprojects {
+  apply plugin: 'java'
+  apply plugin: 'maven'
+  apply plugin: 'signing'
+
+  ext {
+    gdxVersion = '1.9.2'
+    dragomeVersion = '0.96-beta3-SNAPSHOT'
+    wagonVersion = '2.10'
+    junitVersion = '4.12'
+    isSnapshot = '-SNAPSHOT' // ''
+    libVersion = gdxVersion + isSnapshot
+    isReleaseVersion = !libVersion.endsWith("SNAPSHOT")
+  }
+
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+  }
+
+  sourceCompatibility = 1.6
+  group = 'com.dragome'
+  version = libVersion
+  archivesBaseName = projectName
+  eclipse.project.name = projectName
+
+  configurations {
+    deployerJars
+  }
+
+  jar {
+    from project.sourceSets.main.allSource
+    from project.sourceSets.main.output
+    baseName = archivesBaseName
+  }
+
+  dependencies {
+    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    compile "com.dragome:dragome-js-jre:$dragomeVersion"
+    compile "com.dragome:dragome-web:$dragomeVersion"
+    compile "com.dragome:dragome-bytecode-js-compiler:$dragomeVersion"
+
+    testCompile "junit:junit:$junitVersion"
+
+    deployerJars "org.apache.maven.wagon:wagon-ssh:$wagonVersion"
+    deployerJars "org.apache.maven.wagon:wagon-http:$wagonVersion"
+  }
+
+  task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+  }
+
+  task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+  }
+
+  artifacts {
+    archives javadocJar, sourcesJar
+  }
+
+  signing {
+    required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+  }
+
+  uploadArchives {
+    repositories {
+      mavenDeployer {
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+          authentication(userName: ossrhUsername, password: ossrhPassword)
+        }
+
+        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+          authentication(userName: ossrhUsername, password: ossrhPassword)
+        }
+
+        pom.project {
+          name = projectName
+          packaging 'jar'
+          description = projectDesc
+          url 'http://github.com/dragome/gdx-dragome/'
+
+          licenses {
+            license {
+              name 'The Apache License, Version 2.0'
+              url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+          }
+          
+          scm {
+            connection 'scm:git:git@github.com:dragome/gdx-dragome.git'
+            developerConnection 'scm:git:git@github.com:dragome/gdx-dragome.git'
+            url 'http://github.com/dragome/gdx-dragome/'
+          }
+
+          developers {
+            developer {
+              id 'mj'
+              name 'MJ'
+              email 'john.hervicc@gmail.com'
+            }
+            developer {
+              id 'fp'
+              name 'Fernando Petrola'
+              email 'fernando.petrola@dragome.com'
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Invokes 'build' and 'install' tasks on all projects in the correct order.
+// Prefer this over 'gradle build install' when changing the version of library.
+task installAll(dependsOn: ['installBase', 'controllers:build',
+  'controllers:install']) 
+task installBase(dependsOn: ['core:build', 'core:install'])
+
+tasks.eclipse.doLast {
+  delete ".project"
+  delete ".classpath"
+  delete ".settings/"
+}
