@@ -72,6 +72,7 @@ public class DragomeInput implements ResettableInput {
 		final EventTarget canvasTarget = JsCast.castTo(canvas, EventTarget.class);
 		final EventTarget document = ScriptHelper.evalCasting("document", EventTarget.class, this);
 
+		// Mouse events:
 		org.w3c.dom.events.EventListener listener = getMouseDownListener();
 		canvasTarget.addEventListener("mousedown", listener, true);
 		document.addEventListener("mousedown", listener, true);
@@ -88,18 +89,16 @@ public class DragomeInput implements ResettableInput {
 		canvasTarget.addEventListener("mousemove", listener, true);
 		canvasTarget.addEventListener("DOMMouseScroll", listener, true);
 
-		listener = getKeyDownListener();
-		document.addEventListener("keydown", listener, false);
-		listener = getKeyUpListener();
-		document.addEventListener("keyup", listener, false);
-		listener = getKeyPressListener();
-		document.addEventListener("keypress", listener, false);
+		// Keyboard events:
+		document.addEventListener("keydown", getKeyDownListener(), false);
+		document.addEventListener("keyup", getKeyUpListener(), false);
+		document.addEventListener("keypress", getKeyPressListener(), false);
 
-		// TODO touch events
-		// addEventListener(canvas, "touchstart", this, true);
-		// addEventListener(canvas, "touchmove", this, true);
-		// addEventListener(canvas, "touchcancel", this, true);
-		// addEventListener(canvas, "touchend", this, true);
+		// Touch events:
+		canvasTarget.addEventListener("touchstart", getTouchStartListener(), true);
+		canvasTarget.addEventListener("touchmove", getTouchMoveListener(), true);
+		canvasTarget.addEventListener("touchcancel", getTouchCancelListener(), true);
+		canvasTarget.addEventListener("touchend", getTouchEndListener(), true);
 	}
 
 	// TODO Implement relative X and Y.
@@ -337,6 +336,110 @@ public class DragomeInput implements ResettableInput {
 				if (processor != null) {
 					processor.keyTyped(character);
 				}
+			}
+		};
+	}
+
+	// TODO Implement touch events.
+	/** @return handles "touchstart" events. */
+	protected org.w3c.dom.events.EventListener getTouchStartListener () {
+		return new org.w3c.dom.events.EventListener() {
+			@Override
+			public void handleEvent (final Event evt) {
+				// justTouched = true;
+				// JsArray<Touch> touches = e.getChangedTouches();
+				// for (int i = 0, j = touches.length(); i < j; i++) {
+				// Touch touch = touches.get(i);
+				// int real = touch.getIdentifier();
+				// int touchId;
+				// touchMap.put(real, touchId = getAvailablePointer());
+				// touched[touchId] = true;
+				// touchX[touchId] = getRelativeX(touch, canvas);
+				// touchY[touchId] = getRelativeY(touch, canvas);
+				// deltaX[touchId] = 0;
+				// deltaY[touchId] = 0;
+				// if (processor != null) {
+				// processor.touchDown(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT);
+				// }
+				// }
+				currentEventTimeStamp = TimeUtils.nanoTime();
+				evt.preventDefault();
+			}
+		};
+	}
+
+	/** @return handles "touchmove" events. */
+	protected org.w3c.dom.events.EventListener getTouchMoveListener () {
+		return new org.w3c.dom.events.EventListener() {
+			@Override
+			public void handleEvent (final Event evt) {
+				// JsArray<Touch> touches = e.getChangedTouches();
+				// for (int i = 0, j = touches.length(); i < j; i++) {
+				// Touch touch = touches.get(i);
+				// int real = touch.getIdentifier();
+				// int touchId = touchMap.get(real);
+				// deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
+				// deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId];
+				// touchX[touchId] = getRelativeX(touch, canvas);
+				// touchY[touchId] = getRelativeY(touch, canvas);
+				// if (processor != null) {
+				// processor.touchDragged(touchX[touchId], touchY[touchId], touchId);
+				// }
+				// }
+				currentEventTimeStamp = TimeUtils.nanoTime();
+				evt.preventDefault();
+			}
+		};
+	}
+
+	/** @return handles "touchcancel" events. */
+	protected org.w3c.dom.events.EventListener getTouchCancelListener () {
+		return new org.w3c.dom.events.EventListener() {
+			@Override
+			public void handleEvent (final Event evt) {
+				// JsArray<Touch> touches = e.getChangedTouches();
+				// for (int i = 0, j = touches.length(); i < j; i++) {
+				// Touch touch = touches.get(i);
+				// int real = touch.getIdentifier();
+				// int touchId = touchMap.get(real);
+				// touchMap.remove(real);
+				// touched[touchId] = false;
+				// deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
+				// deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId];
+				// touchX[touchId] = getRelativeX(touch, canvas);
+				// touchY[touchId] = getRelativeY(touch, canvas);
+				// if (processor != null) {
+				// processor.touchUp(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT);
+				// }
+				// }
+				currentEventTimeStamp = TimeUtils.nanoTime();
+				evt.preventDefault();
+			}
+		};
+	}
+
+	/** @return handles "touchend" events. */
+	protected org.w3c.dom.events.EventListener getTouchEndListener () {
+		return new org.w3c.dom.events.EventListener() {
+			@Override
+			public void handleEvent (final Event evt) {
+				// JsArray<Touch> touches = e.getChangedTouches();
+				// for (int i = 0, j = touches.length(); i < j; i++) {
+				// Touch touch = touches.get(i);
+				// int real = touch.getIdentifier();
+				// int touchId = touchMap.get(real);
+				// touchMap.remove(real);
+				// touched[touchId] = false;
+				// deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
+				// deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId];
+				// touchX[touchId] = getRelativeX(touch, canvas);
+				// touchY[touchId] = getRelativeY(touch, canvas);
+				// if (processor != null) {
+				// processor.touchUp(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT);
+				// }
+				// }
+				currentEventTimeStamp = TimeUtils.nanoTime();
+				evt.preventDefault();
 			}
 		};
 	}
