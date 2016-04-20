@@ -4,6 +4,7 @@ package com.dragome.gdx.graphics;
 import org.w3c.dom.ObjectArray;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.html.HTMLCanvasElement;
 import org.w3c.dom.webgl.WebGLContextAttributes;
 import org.w3c.dom.webgl.WebGLRenderingContext;
@@ -22,7 +23,6 @@ import com.dragome.gdx.DragomeApplicationConfiguration;
 import com.dragome.gdx.graphics.resizing.Resizer;
 import com.dragome.gdx.graphics.webgl.DragomeGL20;
 import com.dragome.gdx.lifecycle.Renderer;
-import com.dragome.web.html.dom.Window;
 
 /** Default implementation of {@link Graphics} for Dragome applications. Wraps around a HTML canvas and WebGL. Does not support
  * GL30. Allows to go to fullscreen mode only if chosen display mode matches current screen size. Allows to change cursors and
@@ -78,7 +78,7 @@ public class DragomeGraphics implements Graphics {
 	}
 
 	private void addFullscreenListener () {
-		final Window window = Window.getInstance();
+		final EventTarget document = ScriptHelper.evalCasting("document", EventTarget.class, this);
 		final EventListener listener = new EventListener() {
 			@Override
 			public void handleEvent (final Event event) {
@@ -87,7 +87,7 @@ public class DragomeGraphics implements Graphics {
 		};
 		for (final String event : new String[] {"fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange",
 			"msfullscreenchange"}) {
-			window.addEventListener(listener, event);
+			document.addEventListener(event, listener, false);
 		}
 	}
 

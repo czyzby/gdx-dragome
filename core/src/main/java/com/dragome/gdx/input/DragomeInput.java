@@ -41,6 +41,17 @@ public class DragomeInput implements ResettableInput {
 	public DragomeInput (final DragomeApplication application) {
 		canvas = application.getCanvas();
 		addEventListeners();
+		addInputPolyfills();
+	}
+
+	protected void addInputPolyfills () {
+		// navigator.pointer:
+		ScriptHelper.evalNoResult("if (!navigator.pointer) {navigator.pointer = navigator.webkitPointer || navigator.mozPointer;}",
+			this);
+		// exitPointerLock():
+		ScriptHelper.evalNoResult(
+			"if (!document.exitPointerLock) { document.exitPointerLock = (function() { return document.webkitExitPointerLock || document.mozExitPointerLock || function() {if (navigator.pointer) { navigator.pointer.unlock(); } }; })();}",
+			this);
 	}
 
 	/** Adds input event listeners. */
@@ -255,17 +266,26 @@ public class DragomeInput implements ResettableInput {
 
 	@Override
 	public void setCursorCatched (final boolean catched) {
-		// TODO implement cursor catching
+		if (catched) {
+			ScriptHelper.put("_elem", canvas, this);
+			ScriptHelper.evalNoResult(
+				"if (!element.requestPointerLock) { element.requestPointerLock = (function() { return element.webkitRequestPointerLock || element.mozRequestPointerLock || function() { if (navigator.pointer) { navigator.pointer.lock(element); } }; })();} element.requestPointerLock()",
+				this);
+		} else {
+			ScriptHelper.evalNoResult("document.exitPointerLock()", this);
+		}
 	}
 
 	@Override
 	public boolean isCursorCatched () {
-		return false; // TODO implement cursor catching
+		return ScriptHelper.evalBoolean(
+			"(function(){if(navigator.pointer){if(typeof (navigator.pointer.isLocked) === 'boolean') {return navigator.pointer.isLocked;} else if (typeof (navigator.pointer.isLocked) === 'function') {return navigator.pointer.isLocked();} else if (typeof (navigator.pointer.islocked) === 'function') {return navigator.pointer.islocked();} } return false;})()",
+			this);
 	}
 
 	@Override
 	public void setCursorPosition (final int x, final int y) {
-		// TODO implement cursor position setting
+		Gdx.app.error(DragomeApplication.LOGGING_TAG, "DragomeInput#setCursorPosition is not supported.");
 	}
 
 	@Override
