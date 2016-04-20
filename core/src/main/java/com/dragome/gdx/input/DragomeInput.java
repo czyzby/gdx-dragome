@@ -2,7 +2,9 @@
 package com.dragome.gdx.input;
 
 import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
+import org.w3c.dom.events.KeyboardEvent;
 import org.w3c.dom.events.MouseEvent;
 import org.w3c.dom.html.HTMLCanvasElement;
 
@@ -86,11 +88,14 @@ public class DragomeInput implements ResettableInput {
 		canvasTarget.addEventListener("mousemove", listener, true);
 		canvasTarget.addEventListener("DOMMouseScroll", listener, true);
 
-		// addEventListener(canvas, getMouseWheelEvent(), this, true);
-		// addEventListener(Document.get(), "keydown", this, false);
-		// addEventListener(Document.get(), "keyup", this, false);
-		// addEventListener(Document.get(), "keypress", this, false);
-		//
+		listener = getKeyDownListener();
+		document.addEventListener("keydown", listener, false);
+		listener = getKeyUpListener();
+		document.addEventListener("keyup", listener, false);
+		listener = getKeyPressListener();
+		document.addEventListener("keypress", listener, false);
+
+		// TODO touch events
 		// addEventListener(canvas, "touchstart", this, true);
 		// addEventListener(canvas, "touchmove", this, true);
 		// addEventListener(canvas, "touchcancel", this, true);
@@ -275,6 +280,63 @@ public class DragomeInput implements ResettableInput {
 				// }
 				// }
 				// return delta;
+			}
+		};
+	}
+
+	/** @return handles "keydown" events. */
+	protected EventListener getKeyDownListener () {
+		return new org.w3c.dom.events.EventListener() {
+			@Override
+			public void handleEvent (final Event evt) {
+				final int code = KeyCodes.toKey(JsCast.castTo(evt, KeyboardEvent.class).getKeyCode());
+				if (code == 67) {
+					evt.preventDefault();
+					if (processor != null) {
+						processor.keyDown(code);
+						processor.keyTyped('\b');
+					}
+				} else {
+					if (!pressedKeys[code]) {
+						pressedKeyCount++;
+						pressedKeys[code] = true;
+						keyJustPressed = true;
+						justPressedKeys[code] = true;
+						if (processor != null) {
+							processor.keyDown(code);
+						}
+					}
+				}
+			}
+		};
+	}
+
+	/** @return handles "keyup" events. */
+	protected org.w3c.dom.events.EventListener getKeyUpListener () {
+		return new org.w3c.dom.events.EventListener() {
+			@Override
+			public void handleEvent (final Event evt) {
+				final int code = KeyCodes.toKey(JsCast.castTo(evt, KeyboardEvent.class).getKeyCode());
+				if (pressedKeys[code]) {
+					pressedKeyCount--;
+					pressedKeys[code] = false;
+				}
+				if (processor != null) {
+					processor.keyUp(code);
+				}
+			}
+		};
+	}
+
+	/** @return handles "keypress" events. */
+	protected org.w3c.dom.events.EventListener getKeyPressListener () {
+		return new org.w3c.dom.events.EventListener() {
+			@Override
+			public void handleEvent (final Event evt) {
+				final char character = (char)JsCast.castTo(evt, KeyboardEvent.class).getCharCode();
+				if (processor != null) {
+					processor.keyTyped(character);
+				}
 			}
 		};
 	}
