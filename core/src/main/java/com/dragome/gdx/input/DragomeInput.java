@@ -1,6 +1,9 @@
 
 package com.dragome.gdx.input;
 
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventTarget;
+import org.w3c.dom.events.MouseEvent;
 import org.w3c.dom.html.HTMLCanvasElement;
 
 import com.badlogic.gdx.Gdx;
@@ -8,14 +11,22 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.IntSet;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.gdx.DragomeApplication;
+import com.dragome.web.enhancers.jsdelegate.JsCast;
 
 /** Handles {@link Input} events in the Dragome application. Supports only keyboard and touch events.
  * @author MJ */
 @SuppressWarnings("unused")
 public class DragomeInput implements ResettableInput {
 	private static final int MAX_TOUCHES = 20;
+	/** The left mouse button. */
+	public static final int BUTTON_LEFT = 1;
+	/** The middle mouse button. */
+	public static final int BUTTON_MIDDLE = 4;
+	/** The right mouse button. */
+	public static final int BUTTON_RIGHT = 2;
 
 	private final HTMLCanvasElement canvas;
 	private InputProcessor processor;
@@ -30,7 +41,7 @@ public class DragomeInput implements ResettableInput {
 	private final boolean[] pressedKeys = new boolean[256];
 	private final boolean[] justPressedKeys = new boolean[256];
 
-	private final boolean hasFocus = true;
+	private boolean hasFocus = true;
 	private boolean justTouched;
 	private int pressedKeyCount;
 	private boolean keyJustPressed;
@@ -56,13 +67,25 @@ public class DragomeInput implements ResettableInput {
 
 	/** Adds input event listeners. */
 	protected void addEventListeners () {
-		// TODO implement event listeners
-		// canvas.addEventListener(canvas, "mousedown", this, true);
-		// addEventListener(Document.get(), "mousedown", this, true);
-		// addEventListener(canvas, "mouseup", this, true);
-		// addEventListener(Document.get(), "mouseup", this, true);
-		// addEventListener(canvas, "mousemove", this, true);
-		// addEventListener(Document.get(), "mousemove", this, true);
+		final EventTarget canvasTarget = JsCast.castTo(canvas, EventTarget.class);
+		final EventTarget document = ScriptHelper.evalCasting("document", EventTarget.class, this);
+
+		org.w3c.dom.events.EventListener listener = getMouseDownListener();
+		canvasTarget.addEventListener("mousedown", listener, true);
+		document.addEventListener("mousedown", listener, true);
+
+		listener = getMouseUpListener();
+		canvasTarget.addEventListener("mouseup", listener, true);
+		document.addEventListener("mouseup", listener, true);
+
+		listener = getMouseMoveListener();
+		canvasTarget.addEventListener("mousemove", listener, true);
+		document.addEventListener("mousemove", listener, true);
+
+		listener = getMouseScrollListener();
+		canvasTarget.addEventListener("mousemove", listener, true);
+		canvasTarget.addEventListener("DOMMouseScroll", listener, true);
+
 		// addEventListener(canvas, getMouseWheelEvent(), this, true);
 		// addEventListener(Document.get(), "keydown", this, false);
 		// addEventListener(Document.get(), "keyup", this, false);
@@ -73,68 +96,188 @@ public class DragomeInput implements ResettableInput {
 		// addEventListener(canvas, "touchcancel", this, true);
 		// addEventListener(canvas, "touchend", this, true);
 	}
-	/*
-	 * TODO separate into multiple listeners.
-	 *
-	 * private void handleEvent (NativeEvent e) { if (e.getType().equals("mousedown")) { if (!e.getEventTarget().equals(canvas) ||
-	 * touched[0]) { float mouseX = getRelativeX(e, canvas); float mouseY = getRelativeY(e, canvas); if (mouseX < 0 || mouseX >
-	 * Gdx.graphics.getWidth() || mouseY < 0 || mouseY > Gdx.graphics.getHeight()) { hasFocus = false; } return; } hasFocus = true;
-	 * this.justTouched = true; this.touched[0] = true; this.pressedButtons.add(getButton(e.getButton())); this.deltaX[0] = 0;
-	 * this.deltaY[0] = 0; if (isCursorCatched()) { this.touchX[0] += getMovementXJSNI(e); this.touchY[0] += getMovementYJSNI(e); }
-	 * else { this.touchX[0] = getRelativeX(e, canvas); this.touchY[0] = getRelativeY(e, canvas); } this.currentEventTimeStamp =
-	 * TimeUtils.nanoTime(); if (processor != null) processor.touchDown(touchX[0], touchY[0], 0, getButton(e.getButton())); }
-	 *
-	 * if (e.getType().equals("mousemove")) { if (isCursorCatched()) { this.deltaX[0] = (int)getMovementXJSNI(e); this.deltaY[0] =
-	 * (int)getMovementYJSNI(e); this.touchX[0] += getMovementXJSNI(e); this.touchY[0] += getMovementYJSNI(e); } else {
-	 * this.deltaX[0] = getRelativeX(e, canvas) - touchX[0]; this.deltaY[0] = getRelativeY(e, canvas) - touchY[0]; this.touchX[0] =
-	 * getRelativeX(e, canvas); this.touchY[0] = getRelativeY(e, canvas); } this.currentEventTimeStamp = TimeUtils.nanoTime(); if
-	 * (processor != null) { if (touched[0]) processor.touchDragged(touchX[0], touchY[0], 0); else processor.mouseMoved(touchX[0],
-	 * touchY[0]); } }
-	 *
-	 * if (e.getType().equals("mouseup")) { if (!touched[0]) return; this.pressedButtons.remove(getButton(e.getButton()));
-	 * this.touched[0] = pressedButtons.size > 0; if (isCursorCatched()) { this.deltaX[0] = (int)getMovementXJSNI(e);
-	 * this.deltaY[0] = (int)getMovementYJSNI(e); this.touchX[0] += getMovementXJSNI(e); this.touchY[0] += getMovementYJSNI(e); }
-	 * else { this.deltaX[0] = getRelativeX(e, canvas) - touchX[0]; this.deltaY[0] = getRelativeY(e, canvas) - touchY[0];
-	 * this.touchX[0] = getRelativeX(e, canvas); this.touchY[0] = getRelativeY(e, canvas); } this.currentEventTimeStamp =
-	 * TimeUtils.nanoTime(); this.touched[0] = false; if (processor != null) processor.touchUp(touchX[0], touchY[0], 0,
-	 * getButton(e.getButton())); } if (e.getType().equals(getMouseWheelEvent())) { if (processor != null) {
-	 * processor.scrolled((int)getMouseWheelVelocity(e)); } this.currentEventTimeStamp = TimeUtils.nanoTime(); e.preventDefault();
-	 * } if (e.getType().equals("keydown") && hasFocus) { // System.out.println("keydown"); int code = keyForCode(e.getKeyCode());
-	 * if (code == 67) { e.preventDefault(); if (processor != null) { processor.keyDown(code); processor.keyTyped('\b'); } } else {
-	 * if (!pressedKeys[code]) { pressedKeyCount++; pressedKeys[code] = true; keyJustPressed = true; justPressedKeys[code] = true;
-	 * if (processor != null) { processor.keyDown(code); } } } }
-	 *
-	 * if (e.getType().equals("keypress") && hasFocus) { // System.out.println("keypress"); char c = (char)e.getCharCode(); if
-	 * (processor != null) processor.keyTyped(c); }
-	 *
-	 * if (e.getType().equals("keyup") && hasFocus) { // System.out.println("keyup"); int code = keyForCode(e.getKeyCode()); if
-	 * (pressedKeys[code]) { pressedKeyCount--; pressedKeys[code] = false; } if (processor != null) { processor.keyUp(code); } }
-	 *
-	 * if (e.getType().equals("touchstart")) { this.justTouched = true; JsArray<Touch> touches = e.getChangedTouches(); for (int i
-	 * = 0, j = touches.length(); i < j; i++) { Touch touch = touches.get(i); int real = touch.getIdentifier(); int touchId;
-	 * touchMap.put(real, touchId = getAvailablePointer()); touched[touchId] = true; touchX[touchId] = getRelativeX(touch, canvas);
-	 * touchY[touchId] = getRelativeY(touch, canvas); deltaX[touchId] = 0; deltaY[touchId] = 0; if (processor != null) {
-	 * processor.touchDown(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT); } } this.currentEventTimeStamp =
-	 * TimeUtils.nanoTime(); e.preventDefault(); } if (e.getType().equals("touchmove")) { JsArray<Touch> touches =
-	 * e.getChangedTouches(); for (int i = 0, j = touches.length(); i < j; i++) { Touch touch = touches.get(i); int real =
-	 * touch.getIdentifier(); int touchId = touchMap.get(real); deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
-	 * deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId]; touchX[touchId] = getRelativeX(touch, canvas);
-	 * touchY[touchId] = getRelativeY(touch, canvas); if (processor != null) { processor.touchDragged(touchX[touchId],
-	 * touchY[touchId], touchId); } } this.currentEventTimeStamp = TimeUtils.nanoTime(); e.preventDefault(); } if
-	 * (e.getType().equals("touchcancel")) { JsArray<Touch> touches = e.getChangedTouches(); for (int i = 0, j = touches.length();
-	 * i < j; i++) { Touch touch = touches.get(i); int real = touch.getIdentifier(); int touchId = touchMap.get(real);
-	 * touchMap.remove(real); touched[touchId] = false; deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
-	 * deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId]; touchX[touchId] = getRelativeX(touch, canvas);
-	 * touchY[touchId] = getRelativeY(touch, canvas); if (processor != null) { processor.touchUp(touchX[touchId], touchY[touchId],
-	 * touchId, Buttons.LEFT); } } this.currentEventTimeStamp = TimeUtils.nanoTime(); e.preventDefault(); } if
-	 * (e.getType().equals("touchend")) { JsArray<Touch> touches = e.getChangedTouches(); for (int i = 0, j = touches.length(); i <
-	 * j; i++) { Touch touch = touches.get(i); int real = touch.getIdentifier(); int touchId = touchMap.get(real);
-	 * touchMap.remove(real); touched[touchId] = false; deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
-	 * deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId]; touchX[touchId] = getRelativeX(touch, canvas);
-	 * touchY[touchId] = getRelativeY(touch, canvas); if (processor != null) { processor.touchUp(touchX[touchId], touchY[touchId],
-	 * touchId, Buttons.LEFT); } } this.currentEventTimeStamp = TimeUtils.nanoTime(); e.preventDefault(); } // if(hasFocus)
-	 * e.preventDefault(); }
-	 */
+
+	// TODO Implement relative X and Y.
+	protected int getRelativeX (final MouseEvent event, final HTMLCanvasElement target) {
+		/** Kindly borrowed from PlayN. **/
+		// final float xScaleRatio = target.getWidth() * 1f / target.getClientWidth(); // Correct for canvas CSS scaling
+		// return Math.round(xScaleRatio
+		// * (e.getClientX() - target.getAbsoluteLeft() + target.getScrollLeft() + target.getOwnerDocument().getScrollLeft()));
+		return event.getClientX();
+	}
+
+	protected int getRelativeY (final MouseEvent event, final HTMLCanvasElement target) {
+		/** Kindly borrowed from PlayN. **/
+		// final float yScaleRatio = target.getHeight() * 1f / target.getClientHeight(); // Correct for canvas CSS scaling
+		// return Math.round(yScaleRatio
+		// * (e.getClientY() - target.getAbsoluteTop() + target.getScrollTop() + target.getOwnerDocument().getScrollTop()));
+		return event.getClientY();
+	}
+
+	/** @param button native button code.
+	 * @return {@link Buttons} code. */
+	protected int getButton (final int button) {
+		if (button == BUTTON_LEFT) {
+			return Buttons.LEFT;
+		} else if (button == BUTTON_RIGHT) {
+			return Buttons.RIGHT;
+		} else if (button == BUTTON_MIDDLE) {
+			return Buttons.MIDDLE;
+		}
+		return Buttons.LEFT;
+	}
+
+	protected float getMovementX (final MouseEvent event) {
+		ScriptHelper.put("_event", event, this);
+		return ScriptHelper.evalFloat("event.movementX || event.webkitMovementX || 0", this);
+	}
+
+	protected float getMovementY (final MouseEvent event) {
+		ScriptHelper.put("_event", event, this);
+		return ScriptHelper.evalFloat("event.movementY || event.webkitMovementY || 0", this);
+	}
+
+	/** @return listener handling "mousedown" event. */
+	protected org.w3c.dom.events.EventListener getMouseDownListener () {
+		return new org.w3c.dom.events.EventListener() {
+			@Override
+			public void handleEvent (final Event evt) {
+				final MouseEvent event = JsCast.castTo(evt, MouseEvent.class);
+				if (!event.getTarget().equals(canvas) || touched[0]) { // TODO getTarget or getCurrentTarget?
+					final float mouseX = getRelativeX(event, canvas);
+					final float mouseY = getRelativeY(event, canvas);
+					if (mouseX < 0 || mouseX > Gdx.graphics.getWidth() || mouseY < 0 || mouseY > Gdx.graphics.getHeight()) {
+						hasFocus = false;
+					}
+					return;
+				}
+				hasFocus = true;
+				justTouched = true;
+				touched[0] = true;
+				pressedButtons.add(getButton(event.getButton()));
+				deltaX[0] = 0;
+				deltaY[0] = 0;
+				if (isCursorCatched()) {
+					touchX[0] += getMovementX(event);
+					touchY[0] += getMovementY(event);
+				} else {
+					touchX[0] = getRelativeX(event, canvas);
+					touchY[0] = getRelativeY(event, canvas);
+				}
+				currentEventTimeStamp = TimeUtils.nanoTime();
+				if (processor != null) {
+					processor.touchDown(touchX[0], touchY[0], 0, getButton(event.getButton()));
+				}
+			}
+		};
+	}
+
+	/** @return handles "mouseup" event. */
+	protected org.w3c.dom.events.EventListener getMouseUpListener () {
+		return new org.w3c.dom.events.EventListener() {
+			@Override
+			public void handleEvent (final Event evt) {
+				final MouseEvent event = JsCast.castTo(evt, MouseEvent.class);
+				if (!touched[0]) {
+					return;
+				}
+				pressedButtons.remove(getButton(event.getButton()));
+				touched[0] = pressedButtons.size > 0;
+				if (isCursorCatched()) {
+					deltaX[0] = (int)getMovementX(event);
+					deltaY[0] = (int)getMovementY(event);
+					touchX[0] += getMovementX(event);
+					touchY[0] += getMovementY(event);
+				} else {
+					deltaX[0] = getRelativeX(event, canvas) - touchX[0];
+					deltaY[0] = getRelativeY(event, canvas) - touchY[0];
+					touchX[0] = getRelativeX(event, canvas);
+					touchY[0] = getRelativeY(event, canvas);
+				}
+				currentEventTimeStamp = TimeUtils.nanoTime();
+				touched[0] = false;
+				if (processor != null) {
+					processor.touchUp(touchX[0], touchY[0], 0, getButton(event.getButton()));
+				}
+			}
+		};
+	}
+
+	/** @return handles "mousemove" event. */
+	protected org.w3c.dom.events.EventListener getMouseMoveListener () {
+		return new org.w3c.dom.events.EventListener() {
+			@Override
+			public void handleEvent (final Event evt) {
+				final MouseEvent event = JsCast.castTo(evt, MouseEvent.class);
+				if (isCursorCatched()) {
+					deltaX[0] = (int)getMovementX(event);
+					deltaY[0] = (int)getMovementY(event);
+					touchX[0] += getMovementX(event);
+					touchY[0] += getMovementY(event);
+				} else {
+					deltaX[0] = getRelativeX(event, canvas) - touchX[0];
+					deltaY[0] = getRelativeY(event, canvas) - touchY[0];
+					touchX[0] = getRelativeX(event, canvas);
+					touchY[0] = getRelativeY(event, canvas);
+				}
+				currentEventTimeStamp = TimeUtils.nanoTime();
+				if (processor != null) {
+					if (touched[0]) {
+						processor.touchDragged(touchX[0], touchY[0], 0);
+					} else {
+						processor.mouseMoved(touchX[0], touchY[0]);
+					}
+				}
+			}
+		};
+	}
+
+	/** @return handles "mousewheel" and "DOMMouseScroll" events. */
+	protected org.w3c.dom.events.EventListener getMouseScrollListener () {
+		return new org.w3c.dom.events.EventListener() {
+			@Override
+			public void handleEvent (final Event evt) {
+				if (processor != null) {
+					processor.scrolled((int)getMouseWheelVelocity(evt));
+				}
+				currentEventTimeStamp = TimeUtils.nanoTime();
+				evt.preventDefault();
+			}
+
+			private float getMouseWheelVelocity (final Event evt) {
+				// TODO Implement mouse wheel velocity.
+				return 0f;
+				// var delta = 0.0;
+				// var agentInfo = @com.badlogic.gdx.backends.gwt.GwtApplication::agentInfo()();
+				//
+				// if (agentInfo.isFirefox) {
+				// if (agentInfo.isMacOS) {
+				// delta = 1.0 * evt.detail;
+				// } else {
+				// delta = 1.0 * evt.detail / 3;
+				// }
+				// } else if (agentInfo.isOpera) {
+				// if (agentInfo.isLinux) {
+				// delta = -1.0 * evt.wheelDelta / 80;
+				// } else {
+				// // on mac
+				// delta = -1.0 * evt.wheelDelta / 40;
+				// }
+				// } else if (agentInfo.isChrome || agentInfo.isSafari) {
+				// delta = -1.0 * evt.wheelDelta / 120;
+				// // handle touchpad for chrome
+				// if (Math.abs(delta) < 1) {
+				// if (agentInfo.isWindows) {
+				// delta = -1.0 * evt.wheelDelta;
+				// } else if (agentInfo.isMacOS) {
+				// delta = -1.0 * evt.wheelDelta / 3;
+				// }
+				// }
+				// }
+				// return delta;
+			}
+		};
+	}
 
 	@Override
 	public void setInputProcessor (final InputProcessor processor) {
