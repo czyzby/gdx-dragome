@@ -6,6 +6,9 @@ import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.events.KeyboardEvent;
 import org.w3c.dom.events.MouseEvent;
+import org.w3c.dom.events.Touch;
+import org.w3c.dom.events.TouchEvent;
+import org.w3c.dom.events.TouchList;
 import org.w3c.dom.html.HTMLCanvasElement;
 
 import com.badlogic.gdx.Gdx;
@@ -116,6 +119,18 @@ public class DragomeInput implements ResettableInput {
 		// return Math.round(yScaleRatio
 		// * (e.getClientY() - target.getAbsoluteTop() + target.getScrollTop() + target.getOwnerDocument().getScrollTop()));
 		return event.getClientY();
+	}
+
+	protected int getRelativeX (final Touch touch, final HTMLCanvasElement target) {
+		// float xScaleRatio = target.getWidth() * 1f / target.getClientWidth(); // Correct for canvas CSS scaling
+		// return Math.round(xScaleRatio * touch.getRelativeX(target));
+		return touch.getClientX();
+	}
+
+	protected int getRelativeY (final Touch touch, final HTMLCanvasElement target) {
+		// float yScaleRatio = target.getHeight() * 1f / target.getClientHeight(); // Correct for canvas CSS scaling
+		// return Math.round(yScaleRatio * touch.getRelativeY(target));
+		return touch.getClientY();
 	}
 
 	/** @param button native button code.
@@ -340,28 +355,28 @@ public class DragomeInput implements ResettableInput {
 		};
 	}
 
-	// TODO Implement touch events.
 	/** @return handles "touchstart" events. */
 	protected org.w3c.dom.events.EventListener getTouchStartListener () {
 		return new org.w3c.dom.events.EventListener() {
 			@Override
 			public void handleEvent (final Event evt) {
-				// justTouched = true;
-				// JsArray<Touch> touches = e.getChangedTouches();
-				// for (int i = 0, j = touches.length(); i < j; i++) {
-				// Touch touch = touches.get(i);
-				// int real = touch.getIdentifier();
-				// int touchId;
-				// touchMap.put(real, touchId = getAvailablePointer());
-				// touched[touchId] = true;
-				// touchX[touchId] = getRelativeX(touch, canvas);
-				// touchY[touchId] = getRelativeY(touch, canvas);
-				// deltaX[touchId] = 0;
-				// deltaY[touchId] = 0;
-				// if (processor != null) {
-				// processor.touchDown(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT);
-				// }
-				// }
+				justTouched = true;
+				final TouchEvent event = JsCast.castTo(evt, TouchEvent.class);
+				final TouchList touches = event.getChangedTouches();
+				for (int index = 0, length = touches.getLength(); index < length; index++) {
+					final Touch touch = touches.item(index);
+					final int real = touch.getIdentifier();
+					int touchId;
+					touchMap.put(real, touchId = getAvailablePointer());
+					touched[touchId] = true;
+					touchX[touchId] = getRelativeX(touch, canvas);
+					touchY[touchId] = getRelativeY(touch, canvas);
+					deltaX[touchId] = 0;
+					deltaY[touchId] = 0;
+					if (processor != null) {
+						processor.touchDown(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT);
+					}
+				}
 				currentEventTimeStamp = TimeUtils.nanoTime();
 				evt.preventDefault();
 			}
@@ -373,19 +388,20 @@ public class DragomeInput implements ResettableInput {
 		return new org.w3c.dom.events.EventListener() {
 			@Override
 			public void handleEvent (final Event evt) {
-				// JsArray<Touch> touches = e.getChangedTouches();
-				// for (int i = 0, j = touches.length(); i < j; i++) {
-				// Touch touch = touches.get(i);
-				// int real = touch.getIdentifier();
-				// int touchId = touchMap.get(real);
-				// deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
-				// deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId];
-				// touchX[touchId] = getRelativeX(touch, canvas);
-				// touchY[touchId] = getRelativeY(touch, canvas);
-				// if (processor != null) {
-				// processor.touchDragged(touchX[touchId], touchY[touchId], touchId);
-				// }
-				// }
+				final TouchEvent event = JsCast.castTo(evt, TouchEvent.class);
+				final TouchList touches = event.getChangedTouches();
+				for (int index = 0, length = touches.getLength(); index < length; index++) {
+					final Touch touch = touches.item(index);
+					final int real = touch.getIdentifier();
+					final int touchId = touchMap.get(real);
+					deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
+					deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId];
+					touchX[touchId] = getRelativeX(touch, canvas);
+					touchY[touchId] = getRelativeY(touch, canvas);
+					if (processor != null) {
+						processor.touchDragged(touchX[touchId], touchY[touchId], touchId);
+					}
+				}
 				currentEventTimeStamp = TimeUtils.nanoTime();
 				evt.preventDefault();
 			}
@@ -397,21 +413,22 @@ public class DragomeInput implements ResettableInput {
 		return new org.w3c.dom.events.EventListener() {
 			@Override
 			public void handleEvent (final Event evt) {
-				// JsArray<Touch> touches = e.getChangedTouches();
-				// for (int i = 0, j = touches.length(); i < j; i++) {
-				// Touch touch = touches.get(i);
-				// int real = touch.getIdentifier();
-				// int touchId = touchMap.get(real);
-				// touchMap.remove(real);
-				// touched[touchId] = false;
-				// deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
-				// deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId];
-				// touchX[touchId] = getRelativeX(touch, canvas);
-				// touchY[touchId] = getRelativeY(touch, canvas);
-				// if (processor != null) {
-				// processor.touchUp(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT);
-				// }
-				// }
+				final TouchEvent event = JsCast.castTo(evt, TouchEvent.class);
+				final TouchList touches = event.getChangedTouches();
+				for (int index = 0, length = touches.getLength(); index < length; index++) {
+					final Touch touch = touches.item(index);
+					final int real = touch.getIdentifier();
+					final int touchId = touchMap.get(real);
+					touchMap.remove(real);
+					touched[touchId] = false;
+					deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
+					deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId];
+					touchX[touchId] = getRelativeX(touch, canvas);
+					touchY[touchId] = getRelativeY(touch, canvas);
+					if (processor != null) {
+						processor.touchUp(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT);
+					}
+				}
 				currentEventTimeStamp = TimeUtils.nanoTime();
 				evt.preventDefault();
 			}
@@ -423,25 +440,38 @@ public class DragomeInput implements ResettableInput {
 		return new org.w3c.dom.events.EventListener() {
 			@Override
 			public void handleEvent (final Event evt) {
-				// JsArray<Touch> touches = e.getChangedTouches();
-				// for (int i = 0, j = touches.length(); i < j; i++) {
-				// Touch touch = touches.get(i);
-				// int real = touch.getIdentifier();
-				// int touchId = touchMap.get(real);
-				// touchMap.remove(real);
-				// touched[touchId] = false;
-				// deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
-				// deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId];
-				// touchX[touchId] = getRelativeX(touch, canvas);
-				// touchY[touchId] = getRelativeY(touch, canvas);
-				// if (processor != null) {
-				// processor.touchUp(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT);
-				// }
-				// }
+				final TouchEvent event = JsCast.castTo(evt, TouchEvent.class);
+				final TouchList touches = event.getChangedTouches();
+				for (int index = 0, length = touches.getLength(); index < length; index++) {
+					final Touch touch = touches.item(index);
+					final int real = touch.getIdentifier();
+					final int touchId = touchMap.get(real);
+					touchMap.remove(real);
+					touched[touchId] = false;
+					deltaX[touchId] = getRelativeX(touch, canvas) - touchX[touchId];
+					deltaY[touchId] = getRelativeY(touch, canvas) - touchY[touchId];
+					touchX[touchId] = getRelativeX(touch, canvas);
+					touchY[touchId] = getRelativeY(touch, canvas);
+					if (processor != null) {
+						processor.touchUp(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT);
+					}
+				}
 				currentEventTimeStamp = TimeUtils.nanoTime();
 				evt.preventDefault();
 			}
 		};
+	}
+
+	/** Touch events utility.
+	 *
+	 * @return available pointer. */
+	protected int getAvailablePointer () {
+		for (int i = 0; i < MAX_TOUCHES; i++) {
+			if (!touchMap.containsValue(i, false)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	@Override
