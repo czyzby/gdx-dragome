@@ -9,7 +9,7 @@ subprojects {
   apply plugin: 'signing'
 
   ext {
-    gdxVersion = '1.9.2'
+    gdxVersion = '1.9.3'
     dragomeVersion = '0.96-beta3-SNAPSHOT'
     wagonVersion = '2.10'
     junitVersion = '4.12'

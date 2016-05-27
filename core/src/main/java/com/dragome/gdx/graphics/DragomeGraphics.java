@@ -9,12 +9,14 @@ import org.w3c.dom.html.HTMLCanvasElement;
 import org.w3c.dom.webgl.WebGLContextAttributes;
 import org.w3c.dom.webgl.WebGLRenderingContext;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.dragome.commons.javascript.ScriptHelper;
@@ -45,6 +47,7 @@ public class DragomeGraphics implements Graphics {
 	private final Renderer renderer;
 	private final WebGLRenderingContext context;
 	private final GL20 gl20;
+	private final GLVersion version;
 	// Cache:
 	private final Monitor monitor = new DragomeMonitor(0, 0, DragomeApplication.LOGGING_TAG);
 	private final DisplayMode displayMode = new DragomeDisplayMode(getScreenWidth(), getScreenHeight(), REFRESH_RATE, BPP);
@@ -62,6 +65,11 @@ public class DragomeGraphics implements Graphics {
 		context.viewport(0, 0, oldWidth, oldHeight);
 		gl20 = createGL20(context);
 		addFullscreenListener();
+
+		final String versionString = gl20.glGetString(GL20.GL_VERSION);
+		final String vendorString = gl20.glGetString(GL20.GL_VENDOR);
+		final String rendererString = gl20.glGetString(GL20.GL_RENDERER);
+		version = new GLVersion(Application.ApplicationType.WebGL, versionString, vendorString, rendererString);
 	}
 
 	/** Sets {@link WebGLContextAttributes} according to {@link DragomeApplicationConfiguration}.
@@ -465,5 +473,20 @@ public class DragomeGraphics implements Graphics {
 		public DragomeMonitor (final int virtualX, final int virtualY, final String name) {
 			super(virtualX, virtualY, name);
 		}
+	}
+
+	@Override
+	public GLVersion getGLVersion () {
+		return version;
+	}
+
+	@Override
+	public void setUndecorated (final boolean undecorated) {
+		// Canvas cannot be (un)decorated, and it's unlikely to modify browser window.
+	}
+
+	@Override
+	public void setResizable (final boolean resizable) {
+		// Canvas generally should not be resizable.
 	}
 }
