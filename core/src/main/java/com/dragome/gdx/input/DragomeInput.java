@@ -92,7 +92,7 @@ public class DragomeInput implements ResettableInput {
 		document.addEventListener("mousemove", listener, true);
 
 		listener = getMouseScrollListener();
-		canvasTarget.addEventListener("mousemove", listener, true);
+		canvasTarget.addEventListener("mousewheel", listener, true);
 		canvasTarget.addEventListener("DOMMouseScroll", listener, true);
 
 		// Keyboard events:
@@ -260,43 +260,15 @@ public class DragomeInput implements ResettableInput {
 			@Override
 			public void handleEvent (final Event evt) {
 				if (processor != null) {
-					processor.scrolled((int)getMouseWheelVelocity(evt));
+					processor.scrolled((int)Math.signum(getMouseWheelVelocity(evt)));
 				}
 				currentEventTimeStamp = TimeUtils.nanoTime();
 				evt.preventDefault();
 			}
 
 			private float getMouseWheelVelocity (final Event evt) {
-				// TODO Implement mouse wheel velocity.
-				return 0f;
-				// var delta = 0.0;
-				// var agentInfo = @com.badlogic.gdx.backends.gwt.GwtApplication::agentInfo()();
-				//
-				// if (agentInfo.isFirefox) {
-				// if (agentInfo.isMacOS) {
-				// delta = 1.0 * evt.detail;
-				// } else {
-				// delta = 1.0 * evt.detail / 3;
-				// }
-				// } else if (agentInfo.isOpera) {
-				// if (agentInfo.isLinux) {
-				// delta = -1.0 * evt.wheelDelta / 80;
-				// } else {
-				// // on mac
-				// delta = -1.0 * evt.wheelDelta / 40;
-				// }
-				// } else if (agentInfo.isChrome || agentInfo.isSafari) {
-				// delta = -1.0 * evt.wheelDelta / 120;
-				// // handle touchpad for chrome
-				// if (Math.abs(delta) < 1) {
-				// if (agentInfo.isWindows) {
-				// delta = -1.0 * evt.wheelDelta;
-				// } else if (agentInfo.isMacOS) {
-				// delta = -1.0 * evt.wheelDelta / 3;
-				// }
-				// }
-				// }
-				// return delta;
+				ScriptHelper.put("_evt", evt, this); // See https://www.sitepoint.com/html5-javascript-mouse-wheel/ (Inverted!)
+				return ScriptHelper.evalFloat("Math.max(-1, Math.min(1, (-_evt.wheelDelta || _evt.detail)))", this);
 			}
 		};
 	}
