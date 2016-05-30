@@ -205,7 +205,6 @@ public class KeyCodes {
 		KEYS.put(KEY_CLOSE_BRACKET, Keys.RIGHT_BRACKET);
 		KEYS.put(KEY_SINGLE_QUOTE, Keys.APOSTROPHE);
 		KEYS.put(KEY_GRAVE_ACCENT, Keys.GRAVE);
-		// TODO Validate, make sure that they are unsupported:
 		KEYS.put(KEY_MULTIPLY, Keys.STAR);
 		KEYS.put(KEY_DIVIDE, Keys.SLASH);
 		KEYS.put(KEY_CAPS_LOCK, Keys.UNKNOWN);

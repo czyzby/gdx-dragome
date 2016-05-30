@@ -35,7 +35,6 @@ public class DragomeFiles implements Files {
 
 	@Override
 	public FileHandle absolute (final String path) {
-		// TODO Absolute files can be supported - a HTTP request could be sent to the exact address passed by the user.
 		throw new GdxRuntimeException("File type not supported: " + FileType.Absolute);
 	}
 

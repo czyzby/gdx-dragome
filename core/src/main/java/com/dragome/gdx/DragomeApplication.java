@@ -122,7 +122,7 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 	/** @return a new instance of manager that maintains {@link LifecycleListener}s and is notified about application lifecycle
 	 *         events. */
 	protected LifecycleManager createLifecycleManager () {
-		return new LifecycleManager();
+		return new LifecycleManager(getApplicationListener());
 	}
 
 	/** @return a new instance of manager that creates and maintains {@link Preferences} instances. Default implementation uses
