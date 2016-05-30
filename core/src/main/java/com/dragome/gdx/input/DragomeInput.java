@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.IntSet;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.gdx.DragomeApplication;
+import com.dragome.gdx.lifecycle.AgentInfo;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 
 /** Handles {@link Input} events in the Dragome application. Supports only keyboard and touch events.
@@ -34,6 +35,7 @@ public class DragomeInput implements ResettableInput {
 	public static final int BUTTON_RIGHT = 2;
 
 	private final HTMLCanvasElement canvas;
+	private final AgentInfo agentInfo;
 	private InputProcessor processor;
 
 	private final IntMap<Integer> touchMap = new IntMap<Integer>(20);
@@ -54,7 +56,8 @@ public class DragomeInput implements ResettableInput {
 	private float keyRepeatTimer;
 	private long currentEventTimeStamp;
 
-	public DragomeInput (final DragomeApplication application) {
+	public DragomeInput (final DragomeApplication application, final AgentInfo agentInfo) {
+		this.agentInfo = agentInfo;
 		canvas = application.getCanvas();
 		addEventListeners();
 		addInputPolyfills();

@@ -22,6 +22,7 @@ import com.dragome.gdx.graphics.DragomeGraphics;
 import com.dragome.gdx.graphics.resizing.ResizeListener;
 import com.dragome.gdx.input.DragomeInput;
 import com.dragome.gdx.input.ResettableInput;
+import com.dragome.gdx.lifecycle.AgentInfo;
 import com.dragome.gdx.lifecycle.DebugDragomeRenderer;
 import com.dragome.gdx.lifecycle.DragomeRenderer;
 import com.dragome.gdx.lifecycle.LifecycleManager;
@@ -65,6 +66,7 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 	private final DragomeLogger logger;
 	private final Clipboard clipboard;
 	private final Renderer renderer;
+	private final AgentInfo agentInfo;
 
 	/** @param applicationListener handles application events. Uses default configuration. */
 	public DragomeApplication (final ApplicationListener applicationListener) {
@@ -77,6 +79,7 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 		final DragomeApplicationConfiguration configuration) {
 		this.applicationListener = applicationListener;
 		this.configuration = configuration;
+		agentInfo = new AgentInfo();
 
 		logger = createLogger();
 		preferencesResolver = createPreferencesResolver();
@@ -163,7 +166,7 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 	 * @see DragomeInput
 	 * @see ResettableInput */
 	protected ResettableInput createInput () {
-		return new DragomeInput(this);
+		return new DragomeInput(this, getAgentInfo());
 	}
 
 	@Override
@@ -298,6 +301,11 @@ public class DragomeApplication extends DefaultVisualActivity implements Applica
 	/** @return a renderer implementation, handling application's main loop. */
 	public Renderer getRenderer () {
 		return renderer;
+	}
+
+	/** @return informations about the current client. */
+	public AgentInfo getAgentInfo () {
+		return agentInfo;
 	}
 
 	@Override
